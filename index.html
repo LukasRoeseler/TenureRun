@@ -9,7 +9,7 @@
 
         body {
             margin: 0; padding: 0;
-            background-color: #0b0b1a;
+            background-color: #2c3e50;
             display: flex; justify-content: center; align-items: center;
             height: 100vh; font-family: 'Roboto Mono', monospace;
             overflow: hidden; touch-action: none;
@@ -17,9 +17,9 @@
 
         #game-container {
             position: relative; width: 450px; height: 700px;
-            background: linear-gradient(180deg, #1a1a3a 0%, #0b0b1a 100%);
-            border: 4px solid #00d2ff; border-radius: 12px;
-            box-shadow: 0 0 40px rgba(0, 210, 255, 0.4), inset 0 0 20px rgba(0,0,0,0.8);
+            background: #7ac5f7; /* Sky Blue */
+            border: 6px solid #1a252f; border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
             overflow: hidden;
         }
 
@@ -30,16 +30,17 @@
             position: absolute; top: 0; left: 0; width: 100%;
             padding: 20px; box-sizing: border-box;
             display: flex; justify-content: space-between;
-            color: #fff; z-index: 10; pointer-events: none;
-            font-size: 22px; text-shadow: 0 0 10px #00d2ff, 2px 2px 2px #000;
+            color: #333; z-index: 10; pointer-events: none;
+            font-size: 20px; font-weight: bold;
+            text-shadow: 1px 1px 0px #fff;
         }
 
         .screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(11, 11, 26, 0.9);
+            background: rgba(255, 255, 255, 0.85);
             display: flex; flex-direction: column;
             justify-content: center; align-items: center;
-            color: white; z-index: 20; text-align: center;
+            color: #111; z-index: 20; text-align: center;
             padding: 25px; box-sizing: border-box;
             backdrop-filter: blur(4px);
         }
@@ -48,20 +49,20 @@
 
         h1 { 
             font-family: 'Press Start 2P', monospace; 
-            color: #fff; font-size: 26px; 
-            text-shadow: 0 0 15px #ff007f, 4px 4px 0px #4a00e0; 
+            color: #1a252f; font-size: 26px; 
+            text-shadow: 3px 3px 0px #7ac5f7; 
             margin-bottom: 5px; line-height: 1.4;
         }
-        h2 { color: #00d2ff; margin-top: 0; text-shadow: 0 0 10px #00d2ff; }
+        h2 { color: #d35400; margin-top: 0; font-size: 18px; }
         
         .text-content {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255,255,255,0.2);
+            background: #fff;
+            border: 2px solid #ccc;
             padding: 15px; border-radius: 10px;
             font-size: 14px; line-height: 1.6;
             text-align: left; margin-bottom: 20px;
             max-height: 350px; overflow-y: auto;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
         }
 
         .text-content ul { padding-left: 20px; margin: 10px 0; }
@@ -69,22 +70,19 @@
 
         button {
             font-family: 'Press Start 2P', monospace;
-            background: transparent; color: #00d2ff;
-            border: 3px solid #00d2ff; border-radius: 5px;
+            background: #3498db; color: #fff;
+            border: 3px solid #2980b9; border-radius: 5px;
             padding: 15px 20px; font-size: 14px;
-            cursor: pointer; transition: all 0.2s; margin: 8px;
-            text-shadow: 0 0 5px #00d2ff;
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3), inset 0 0 10px rgba(0, 210, 255, 0.1);
+            cursor: pointer; transition: all 0.1s; margin: 8px;
+            box-shadow: 4px 4px 0px #1a252f;
         }
         button:hover { 
-            background: #00d2ff; color: #000; 
-            box-shadow: 0 0 25px rgba(0, 210, 255, 0.8); transform: scale(1.05); 
+            transform: translate(2px, 2px); 
+            box-shadow: 2px 2px 0px #1a252f;
         }
         .btn-orange { 
-            border-color: #ff9800; color: #ff9800; text-shadow: 0 0 5px #ff9800; 
-            box-shadow: 0 0 15px rgba(255, 152, 0, 0.3), inset 0 0 10px rgba(255, 152, 0, 0.1);
+            background: #e67e22; border-color: #d35400;
         }
-        .btn-orange:hover { background: #ff9800; color: #000; box-shadow: 0 0 25px rgba(255, 152, 0, 0.8); }
 
         #warning-flash {
             position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
@@ -110,7 +108,7 @@
             <h1>TENURE RUN</h1>
             <h2>Publish or Perish!</h2>
             
-            <div class="text-content" style="text-align: center; color: #ccc;">
+            <div class="text-content" style="text-align: center;">
                 <strong>CONTROLS</strong><br><br>
                 <strong>[ ◀ ] [ ▶ ]</strong> or <strong>SWIPE</strong><br>Switch Lanes<br><br>
                 <strong>[ ▲ ]</strong> or <strong>SPACE</strong><br>Jump over APCs
@@ -122,12 +120,12 @@
 
         <!-- About Screen -->
         <div id="about-screen" class="screen hidden">
-            <h1 style="font-size: 20px; color: #00d2ff; text-shadow:none;">THE TREADMILL</h1>
+            <h1 style="font-size: 20px;">THE TREADMILL</h1>
             <div class="text-content">
-                <p>Welcome to <strong>Tenure Run</strong>. Navigate the academic publishing landscape:</p>
+                <p>Navigate the academic publishing landscape:</p>
                 <ul>
-                    <li>🧱 <strong>Paywalls:</strong> Blocks access. Hitting one ends your run!</li>
-                    <li>💸 <strong>APCs (Fees):</strong> Low barrier. Jump over it to save grant money!</li>
+                    <li>🧱 <strong>Tall Paywalls:</strong> Blocks access. Too high to jump!</li>
+                    <li><strong style="color:red;">$</strong> <strong>APCs (Fees):</strong> Low barrier. Jump over it to save grant money!</li>
                     <li>🟦 <strong>Open Science:</strong> Blue Hexagon. Collect for citations!</li>
                     <li>💎 <strong>Diamond OA:</strong> Grants a shield from one crash.</li>
                     <li>🔓 <strong>Preprint Server:</strong> Orange Lock. Jetpack over peer-review delays!</li>
@@ -139,9 +137,9 @@
 
         <!-- Game Over Screen -->
         <div id="game-over-screen" class="screen hidden">
-            <h1 style="color: #ff0055; text-shadow: 0 0 20px #ff0055;">REJECTED!</h1>
-            <p style="color:#aaa;">Reviewer 2 caught you, or you hit a Paywall.</p>
-            <h2 style="margin: 20px 0; color:#fff; font-size:24px;">CITATIONS: <br><span id="final-score" style="color:#00d2ff; font-size:40px;">0</span></h2>
+            <h1 style="color: #c0392b;">REJECTED!</h1>
+            <p>Reviewer 2 caught you, or you hit a Paywall.</p>
+            <h2 style="margin: 20px 0; color:#333; font-size:24px;">CITATIONS: <br><span id="final-score" style="color:#2980b9; font-size:40px;">0</span></h2>
             <button onclick="startGame()">NEW SUBMISSION</button>
         </div>
     </div>
@@ -153,8 +151,43 @@
         const statusIndicator = document.getElementById('status-indicator');
         const warningFlash = document.getElementById('warning-flash');
 
-        // --- AUDIO ENGINE ---
+        // --- AUDIO ENGINE (SFX & Funny Music) ---
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let bgmTimer;
+        let nextNoteTime = 0;
+        let noteIndex = 0;
+
+        function scheduleBGM() {
+            if (!isPlaying) return;
+            let currentTime = audioCtx.currentTime;
+            
+            // Look ahead and schedule notes
+            while (nextNoteTime < currentTime + 0.1) {
+                playBGMNote(nextNoteTime);
+                // Tempo increases as gameSpeed increases (gameSpeed starts at 6, up to ~12)
+                let beatDuration = 1.0 / (gameSpeed * 0.4); 
+                nextNoteTime += beatDuration;
+            }
+            bgmTimer = setTimeout(scheduleBGM, 50);
+        }
+
+        function playBGMNote(time) {
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            
+            osc.type = 'triangle';
+            // Alternating tuba/bass notes for a comical running effect
+            let freqs = [130.81, 196.00]; // C3, G3
+            osc.frequency.setValueAtTime(freqs[noteIndex % 2], time);
+            noteIndex++;
+
+            gain.gain.setValueAtTime(0.15, time);
+            gain.gain.exponentialRampToValueAtTime(0.01, time + 0.15);
+            
+            osc.start(time); osc.stop(time + 0.15);
+        }
+
         function playSound(type) {
             if (audioCtx.state === 'suspended') audioCtx.resume();
             const osc = audioCtx.createOscillator();
@@ -182,13 +215,13 @@
         }
 
         // --- GRAPHICS: PIXEL ART & DRAWING ---
-        const colors = {'W':'#ffffff', 'B':'#000000', 'C':'#ffc0cb', 'b':'#1976d2', 'g':'#9e9e9e'};
+        const colors = {'W':'#ffffff', 'B':'#000000', 'C':'#ffc0cb', 'b':'#2980b9'};
         const playerSprite = [
             "  BBBB  ",
             " BCCCCB ",
             " BCBWCB ", // Glasses
             " WWWWWW ", // Lab coat
-            " BWWWWb ", // Lab coat + tie
+            " BWWWWb ", // Lab coat + blue tie
             "  WWWW  ",
             "  B  B  ",
             "  B  B  "
@@ -212,8 +245,7 @@
         }
 
         function drawHexBadge(ctx, x, y, size) {
-            ctx.shadowBlur = 15; ctx.shadowColor = "#00d2ff";
-            ctx.fillStyle = "#0055ff";
+            ctx.fillStyle = "#2980b9"; // Blue
             ctx.beginPath();
             for (let i = 0; i < 6; i++) {
                 let angle = (Math.PI / 3) * i + (Math.PI / 6);
@@ -221,38 +253,44 @@
             }
             ctx.closePath(); ctx.fill();
             // Inner bars
-            ctx.shadowBlur = 0; ctx.fillStyle = "#fff";
+            ctx.fillStyle = "#fff";
             ctx.fillRect(x - 6, y + 2, 3, -8);
             ctx.fillRect(x - 1, y + 2, 3, -12);
             ctx.fillRect(x + 4, y + 2, 3, -6);
         }
 
         function drawLockBadge(ctx, x, y, size) {
-            ctx.shadowBlur = 15; ctx.shadowColor = "#ff9800";
-            ctx.fillStyle = "#ff9800";
-            // Body
-            ctx.fillRect(x - size/2, y, size, size*0.8);
-            // Shackle (Open)
-            ctx.strokeStyle = "#ff9800"; ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.arc(x, y, size*0.4, Math.PI, Math.PI*1.8);
-            ctx.stroke();
+            ctx.fillStyle = "#e67e22"; // Orange
+            ctx.fillRect(x - size/2, y, size, size*0.8); // Body
+            ctx.strokeStyle = "#e67e22"; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.arc(x, y, size*0.4, Math.PI, Math.PI*1.8); ctx.stroke(); // Shackle
             // Keyhole
-            ctx.shadowBlur = 0; ctx.fillStyle = "#fff";
+            ctx.fillStyle = "#fff";
             ctx.beginPath(); ctx.arc(x, y + size*0.3, 3, 0, Math.PI*2); ctx.fill();
             ctx.fillRect(x-1.5, y+size*0.3, 3, 6);
         }
 
         // --- GAME ENGINE ---
-        const LANES = [85, 225, 365];
+        const PAPER_WIDTH = 300;
+        const PAPER_X = (450 - PAPER_WIDTH) / 2; // Center paper
+        const LANES = [125, 225, 325]; // Centers of the lanes on the paper
         const GROUND_Y = 550;
         
-        let isPlaying = false, score = 0, gameSpeed = 8, frameCount = 0, animationId;
+        let isPlaying = false, score = 0, gameSpeed = 6, frameCount = 0, animationId;
         
         let player = { lane: 1, x: 225, y: GROUND_Y, isJumping: false, jumpProgress: 0, hasShield: false, jetpackTimer: 0 };
         let reviewerDist = 100; // 100 = far, 0 = caught
         let entities = [];
         let particles = [];
+        
+        // Background Elements
+        let clouds = Array.from({length: 5}, () => ({
+            x: Math.random() * 450, y: Math.random() * 700, 
+            speed: Math.random() * 0.3 + 0.1, size: Math.random() * 30 + 30
+        }));
+
+        let textLines = [];
+        const academicWords = ["Abstract", "Methodology", "Results", "p < 0.05", "N = 342", "Null Hypothesis", "Discussion", "Conclusion", "Data Set", "Double Blind", "Variables", "Significance"];
 
         // Input
         document.addEventListener('keydown', (e) => {
@@ -285,15 +323,33 @@
         function hideAbout() { document.getElementById('about-screen').classList.add('hidden'); document.getElementById('start-screen').classList.remove('hidden'); }
 
         function startGame() {
-            isPlaying = true; score = 0; gameSpeed = 8; frameCount = 0; entities = []; particles = [];
+            isPlaying = true; score = 0; gameSpeed = 6; frameCount = 0; 
+            entities = []; particles = []; textLines = [];
+            
+            // Seed initial text lines
+            for(let y=0; y<700; y+=40) spawnTextLine(y);
+
             player = { lane: 1, x: 225, y: GROUND_Y, isJumping: false, jumpProgress: 0, hasShield: false, jetpackTimer: 0 };
             reviewerDist = 100;
             scoreEl.innerText = score; statusIndicator.innerText = "";
             warningFlash.classList.remove('warning-active');
+            
             document.getElementById('start-screen').classList.add('hidden');
             document.getElementById('game-over-screen').classList.add('hidden');
+            
+            // Start Audio
             if (audioCtx.state === 'suspended') audioCtx.resume();
+            clearTimeout(bgmTimer);
+            nextNoteTime = audioCtx.currentTime + 0.1;
+            scheduleBGM();
+
             animationId = requestAnimationFrame(gameLoop);
+        }
+
+        function spawnTextLine(yStart) {
+            let str = "";
+            for(let i=0; i<3; i++) str += academicWords[Math.floor(Math.random() * academicWords.length)] + "   ";
+            textLines.push({ y: yStart, text: str });
         }
 
         function spawnEntity() {
@@ -318,11 +374,8 @@
             }
             for(let i=0; i<count; i++) {
                 particles.push({
-                    x: x, y: y,
-                    vx: (Math.random() - 0.5) * 10,
-                    vy: (Math.random() - 0.5) * 10,
-                    life: Math.random() * 0.5 + 0.5,
-                    maxLife: 1, type: 'spark', color: color, size: Math.random() * 4 + 2
+                    x: x, y: y, vx: (Math.random() - 0.5) * 10, vy: (Math.random() - 0.5) * 10,
+                    life: Math.random() * 0.5 + 0.5, maxLife: 1, type: 'spark', color: color, size: Math.random() * 4 + 2
                 });
             }
         }
@@ -331,6 +384,10 @@
             if (!isPlaying) return;
             frameCount++;
             if (frameCount % 600 === 0) gameSpeed += 0.4;
+            
+            // Maintain scrolling text
+            if (frameCount % Math.floor(40/gameSpeed) === 0) spawnTextLine(-20);
+
             if (frameCount % Math.max(20, Math.floor(70 - gameSpeed*1.5)) === 0) spawnEntity();
 
             update(); draw();
@@ -341,26 +398,42 @@
             // Smooth X Movement (Lerp)
             player.x += (LANES[player.lane] - player.x) * 0.2;
 
-            // Jump Physics
+            // Jetpack & Jump Logic
             let jumpOffset = 0;
-            if (player.isJumping) {
+            if (player.jetpackTimer > 0) {
+                player.jetpackTimer--; 
+                jumpOffset = 180; // Fly very high
+                player.isJumping = false; // Override jump state
+                player.jumpProgress = 0;
+                
+                statusIndicator.innerHTML = `🚀 <span style="color:#d35400;">PREPRINT (${Math.ceil(player.jetpackTimer/60)}s)</span>`;
+                spawnParticles(player.x, player.renderY + 20, (frameCount%2===0)?'#e67e22':'#f1c40f', 2);
+            } else if (player.isJumping) {
                 player.jumpProgress += 0.08;
                 jumpOffset = Math.sin(player.jumpProgress) * 120;
-                if (player.jumpProgress >= Math.PI) { player.isJumping = false; jumpOffset = 0; }
-            }
-
-            // Jetpack
-            let activeSpeed = gameSpeed;
-            if (player.jetpackTimer > 0) {
-                player.jetpackTimer--; activeSpeed = gameSpeed * 2.5; jumpOffset = 150;
-                statusIndicator.innerHTML = `🚀 <span style="color:#ff9800;">PREPRINT (${Math.ceil(player.jetpackTimer/60)}s)</span>`;
-                spawnParticles(player.x, player.y + 20, (frameCount%2===0)?'#ff9800':'#ff0000', 2);
+                if (player.jumpProgress >= Math.PI) { 
+                    player.isJumping = false; 
+                    jumpOffset = 0; 
+                }
+                if (player.hasShield) statusIndicator.innerHTML = `💎 <span style="color:#2980b9;">DIAMOND OA</span>`;
+                else statusIndicator.innerHTML = "";
             } else {
-                if (player.hasShield) statusIndicator.innerHTML = `💎 <span style="color:#00d2ff;">DIAMOND OA</span>`;
+                if (player.hasShield) statusIndicator.innerHTML = `💎 <span style="color:#2980b9;">DIAMOND OA</span>`;
                 else statusIndicator.innerHTML = "";
             }
 
             player.renderY = GROUND_Y - jumpOffset;
+            let activeSpeed = (player.jetpackTimer > 0) ? gameSpeed * 2.5 : gameSpeed;
+
+            // Clouds update
+            clouds.forEach(c => {
+                c.y += c.speed;
+                if (c.y > 800) { c.y = -100; c.x = Math.random() * 450; }
+            });
+
+            // Text update
+            textLines.forEach(t => t.y += activeSpeed);
+            textLines = textLines.filter(t => t.y < 800);
 
             // Reviewer Recovery
             if (reviewerDist < 100) {
@@ -373,32 +446,36 @@
                 e.y += activeSpeed;
 
                 // Collision Detection
+                // Notice we check against GROUND_Y to see if it reaches the player's physical feet
                 if (e.lane === player.lane && Math.abs(e.y - GROUND_Y) < 40 && !e.marked) {
                     let isHighUp = (GROUND_Y - player.renderY) > 50;
 
                     if (e.type === 'os_badge') {
                         score += 10; scoreEl.innerText = score; playSound('coin'); e.marked = true;
-                        spawnParticles(e.x, e.y, '#00d2ff', 15);
-                        spawnParticles(e.x, e.y - 20, '#00d2ff', 1, "+10");
+                        spawnParticles(e.x, e.y, '#2980b9', 15);
+                        spawnParticles(e.x, e.y - 20, '#2980b9', 1, "+10");
                     } 
                     else if (e.type === 'diamond') {
                         player.hasShield = true; playSound('powerup'); e.marked = true;
-                        spawnParticles(e.x, e.y, '#00d2ff', 20);
+                        spawnParticles(e.x, e.y, '#3498db', 20);
                     }
                     else if (e.type === 'oa_lock') {
                         player.jetpackTimer = 300; playSound('powerup'); e.marked = true;
-                        spawnParticles(e.x, e.y, '#ff9800', 30);
+                        spawnParticles(e.x, e.y, '#e67e22', 30);
                     }
                     else if (e.type === 'paywall' || e.type === 'apc') {
+                        // Jetpack smashes obstacles
                         if (player.jetpackTimer > 0) {
                             score += 5; scoreEl.innerText = score; e.marked = true; 
-                            spawnParticles(e.x, e.y, '#ff0055', 20); return; 
+                            spawnParticles(e.x, e.y, '#c0392b', 20); return; 
                         }
-                        if (e.type === 'apc' && isHighUp) return; // Safely jumped
+                        
+                        // Jumping saves you from APC, but NOT Paywall
+                        if (e.type === 'apc' && isHighUp) return; 
 
                         // CRASH
                         playSound('crash'); e.marked = true;
-                        spawnParticles(e.x, e.y, '#ff0000', 30);
+                        spawnParticles(e.x, e.y, '#c0392b', 30);
 
                         if (player.hasShield) { player.hasShield = false; stumble(); } 
                         else {
@@ -429,30 +506,46 @@
 
         function gameOver() {
             isPlaying = false; cancelAnimationFrame(animationId);
+            clearTimeout(bgmTimer); // Stop music
             document.getElementById('final-score').innerText = score;
             document.getElementById('game-over-screen').classList.remove('hidden');
         }
 
         // --- RENDER ENGINE ---
         function draw() {
-            // Background Grid (Synthwave style)
+            // Background Sky
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.lineWidth = 2;
             
-            // Vertical lane markers
-            ctx.shadowBlur = 10; ctx.shadowColor = "#ff007f";
-            ctx.strokeStyle = "rgba(255, 0, 127, 0.5)";
-            [155, 295].forEach(x => {
-                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 700); ctx.stroke();
+            // Draw Clouds
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            clouds.forEach(c => {
+                ctx.beginPath();
+                ctx.arc(c.x, c.y, c.size, 0, Math.PI*2);
+                ctx.arc(c.x + c.size*0.8, c.y - c.size*0.3, c.size*0.8, 0, Math.PI*2);
+                ctx.arc(c.x - c.size*0.8, c.y - c.size*0.3, c.size*0.8, 0, Math.PI*2);
+                ctx.fill();
             });
 
-            // Horizontal moving grid lines
-            ctx.shadowColor = "#00d2ff"; ctx.strokeStyle = "rgba(0, 210, 255, 0.3)";
-            const offset = (frameCount * gameSpeed) % 100;
-            for(let y = offset - 100; y < 800; y += 100) {
-                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(450, y); ctx.stroke();
-            }
-            ctx.shadowBlur = 0; // Reset
+            // Draw Paper (The Track)
+            ctx.fillStyle = '#fdfdfd';
+            ctx.shadowBlur = 15; ctx.shadowColor = "rgba(0,0,0,0.3)";
+            ctx.fillRect(PAPER_X, 0, PAPER_WIDTH, 700);
+            ctx.shadowBlur = 0; // reset
+
+            // Paper Lines/Margins (Light blue like notebook paper)
+            ctx.strokeStyle = '#d6eaf8'; ctx.lineWidth = 2;
+            [125, 225, 325].forEach(x => {
+                ctx.beginPath(); ctx.moveTo(x - 40, 0); ctx.lineTo(x - 40, 700); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(x + 40, 0); ctx.lineTo(x + 40, 700); ctx.stroke();
+            });
+
+            // Draw Scrolling Academic Text
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.08)'; // Very faint text
+            ctx.font = "14px 'Times New Roman', serif";
+            ctx.textAlign = "left";
+            textLines.forEach(t => {
+                ctx.fillText(t.text, PAPER_X + 15, t.y);
+            });
 
             // Sort entities so low Y (top of screen) draws first
             entities.sort((a,b) => a.y - b.y);
@@ -461,48 +554,55 @@
             ctx.textAlign = "center"; ctx.textBaseline = "middle";
             entities.forEach(e => {
                 // Drop shadow
-                ctx.fillStyle = "rgba(0,0,0,0.6)";
-                ctx.beginPath(); ctx.ellipse(e.x, e.y + 20, 25, 8, 0, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "rgba(0,0,0,0.2)";
+                ctx.beginPath(); ctx.ellipse(e.x, e.y + 15, 25, 6, 0, 0, Math.PI*2); ctx.fill();
 
                 if (e.type === 'os_badge') drawHexBadge(ctx, e.x, e.y, 16);
                 else if (e.type === 'oa_lock') drawLockBadge(ctx, e.x, e.y, 18);
-                else {
-                    ctx.font = e.type === 'paywall' ? "60px Arial" : "35px Arial";
-                    let yOff = e.type === 'apc' ? 15 : 0;
-                    ctx.shadowBlur = 20; 
-                    ctx.shadowColor = e.type === 'paywall' ? "red" : (e.type === 'apc' ? "yellow" : "cyan");
-                    ctx.fillText(e.type === 'paywall' ? "🧱" : (e.type === 'apc' ? "💸" : "💎"), e.x, e.y + yOff);
-                    ctx.shadowBlur = 0;
+                else if (e.type === 'paywall') {
+                    // Draw tall custom Paywall
+                    ctx.fillStyle = '#8e44ad'; // Purple/Dark Blue base
+                    ctx.fillRect(e.x - 35, e.y - 80, 70, 100);
+                    // Brick lines
+                    ctx.strokeStyle = '#2c3e50'; ctx.lineWidth = 2;
+                    for(let i=0; i<5; i++) {
+                        ctx.beginPath(); ctx.moveTo(e.x-35, e.y-80 + i*20); ctx.lineTo(e.x+35, e.y-80 + i*20); ctx.stroke();
+                    }
+                    ctx.fillStyle = '#fff'; ctx.font = "bold 16px Arial";
+                    ctx.fillText("PAY", e.x, e.y - 45);
+                    ctx.fillText("WALL", e.x, e.y - 25);
+                }
+                else if (e.type === 'apc') {
+                    // Bold Red Dollar Sign
+                    ctx.fillStyle = '#c0392b'; ctx.font = "bold 44px Arial";
+                    ctx.fillText("$", e.x, e.y + 5);
+                }
+                else if (e.type === 'diamond') {
+                    ctx.font = "35px Arial"; ctx.fillText("💎", e.x, e.y);
                 }
             });
 
             // Draw Player Shadow
             let shadowScale = Math.max(0.2, 1 - ((GROUND_Y - player.renderY) / 200));
-            ctx.fillStyle = "rgba(0,0,0,0.6)";
-            ctx.beginPath(); ctx.ellipse(player.x, GROUND_Y + 25, 25 * shadowScale, 8 * shadowScale, 0, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = "rgba(0,0,0,0.3)";
+            ctx.beginPath(); ctx.ellipse(player.x, GROUND_Y + 20, 25 * shadowScale, 6 * shadowScale, 0, 0, Math.PI*2); ctx.fill();
 
             // Shield Aura
             if (player.hasShield) {
-                ctx.shadowBlur = 20; ctx.shadowColor = "#00d2ff";
-                ctx.beginPath(); ctx.arc(player.x, player.renderY, 40, 0, Math.PI*2);
-                ctx.fillStyle = "rgba(0, 210, 255, 0.2)"; ctx.fill();
-                ctx.strokeStyle = "#00d2ff"; ctx.lineWidth = 3; ctx.stroke();
-                ctx.shadowBlur = 0;
+                ctx.beginPath(); ctx.arc(player.x, player.renderY, 35, 0, Math.PI*2);
+                ctx.fillStyle = "rgba(41, 128, 185, 0.3)"; ctx.fill();
+                ctx.strokeStyle = "#2980b9"; ctx.lineWidth = 3; ctx.stroke();
             }
 
             // Draw Player (Pixel Art)
-            ctx.shadowBlur = 10; ctx.shadowColor = "rgba(255,255,255,0.5)";
             drawPixelSprite(ctx, playerSprite, player.x, player.renderY, 5);
-            ctx.shadowBlur = 0;
 
             // Draw Reviewer 2
             if (reviewerDist < 100) {
                 let revY = 750 - (100 - reviewerDist) * 3;
-                ctx.shadowBlur = 30; ctx.shadowColor = "red";
                 ctx.font = "80px Arial"; ctx.fillText("😡", player.x, revY);
-                ctx.fillStyle = "#ff0055"; ctx.font = "bold 16px Roboto Mono";
+                ctx.fillStyle = "#c0392b"; ctx.font = "bold 16px Roboto Mono";
                 ctx.fillText("REVIEWER 2", player.x, revY + 50);
-                ctx.shadowBlur = 0;
             }
 
             // Draw Particles
@@ -510,14 +610,10 @@
                 ctx.globalAlpha = p.life / p.maxLife;
                 if (p.type === 'text') {
                     ctx.fillStyle = p.color; ctx.font = "bold 20px Roboto Mono";
-                    ctx.shadowBlur = 10; ctx.shadowColor = p.color;
                     ctx.fillText(p.text, p.x, p.y);
-                    ctx.shadowBlur = 0;
                 } else {
                     ctx.fillStyle = p.color;
-                    ctx.shadowBlur = 10; ctx.shadowColor = p.color;
                     ctx.fillRect(p.x, p.y, p.size, p.size);
-                    ctx.shadowBlur = 0;
                 }
                 ctx.globalAlpha = 1;
             });

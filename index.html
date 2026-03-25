@@ -9,67 +9,87 @@
 
         body {
             margin: 0; padding: 0;
-            background-color: #111;
+            background-color: #0b0b1a;
             display: flex; justify-content: center; align-items: center;
-            height: 100vh;
-            font-family: 'Roboto Mono', monospace;
+            height: 100vh; font-family: 'Roboto Mono', monospace;
             overflow: hidden; touch-action: none;
         }
 
         #game-container {
-            position: relative;
-            width: 450px; height: 700px;
-            background: #87CEEB; /* Sky color default */
-            border: 4px solid #444; border-radius: 10px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            position: relative; width: 450px; height: 700px;
+            background: linear-gradient(180deg, #1a1a3a 0%, #0b0b1a 100%);
+            border: 4px solid #00d2ff; border-radius: 12px;
+            box-shadow: 0 0 40px rgba(0, 210, 255, 0.4), inset 0 0 20px rgba(0,0,0,0.8);
             overflow: hidden;
         }
 
         canvas { display: block; }
 
+        /* UI Styling */
         #ui-layer {
             position: absolute; top: 0; left: 0; width: 100%;
-            padding: 15px; box-sizing: border-box;
+            padding: 20px; box-sizing: border-box;
             display: flex; justify-content: space-between;
             color: #fff; z-index: 10; pointer-events: none;
-            font-size: 20px; text-shadow: 2px 2px #000;
+            font-size: 22px; text-shadow: 0 0 10px #00d2ff, 2px 2px 2px #000;
         }
 
         .screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(11, 11, 26, 0.9);
             display: flex; flex-direction: column;
             justify-content: center; align-items: center;
             color: white; z-index: 20; text-align: center;
-            padding: 20px; box-sizing: border-box;
+            padding: 25px; box-sizing: border-box;
+            backdrop-filter: blur(4px);
         }
 
         .hidden { display: none !important; }
 
-        h1 { font-family: 'Press Start 2P', monospace; color: #ffeb3b; font-size: 28px; text-shadow: 3px 3px #000; margin-bottom: 10px; line-height: 1.4;}
-        h2 { color: #00d2ff; margin-top: 0; }
+        h1 { 
+            font-family: 'Press Start 2P', monospace; 
+            color: #fff; font-size: 26px; 
+            text-shadow: 0 0 15px #ff007f, 4px 4px 0px #4a00e0; 
+            margin-bottom: 5px; line-height: 1.4;
+        }
+        h2 { color: #00d2ff; margin-top: 0; text-shadow: 0 0 10px #00d2ff; }
         
         .text-content {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255,255,255,0.2);
             padding: 15px; border-radius: 10px;
-            font-size: 13px; line-height: 1.6;
+            font-size: 14px; line-height: 1.6;
             text-align: left; margin-bottom: 20px;
             max-height: 350px; overflow-y: auto;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
         }
+
+        .text-content ul { padding-left: 20px; margin: 10px 0; }
+        .text-content li { margin-bottom: 8px; }
 
         button {
             font-family: 'Press Start 2P', monospace;
-            background: #00d2ff; color: #000;
-            border: 4px solid #fff; border-radius: 0;
+            background: transparent; color: #00d2ff;
+            border: 3px solid #00d2ff; border-radius: 5px;
             padding: 15px 20px; font-size: 14px;
-            cursor: pointer; transition: transform 0.1s; margin: 5px;
+            cursor: pointer; transition: all 0.2s; margin: 8px;
+            text-shadow: 0 0 5px #00d2ff;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3), inset 0 0 10px rgba(0, 210, 255, 0.1);
         }
-        button:hover { transform: scale(1.05); background: #00ffcc; }
+        button:hover { 
+            background: #00d2ff; color: #000; 
+            box-shadow: 0 0 25px rgba(0, 210, 255, 0.8); transform: scale(1.05); 
+        }
+        .btn-orange { 
+            border-color: #ff9800; color: #ff9800; text-shadow: 0 0 5px #ff9800; 
+            box-shadow: 0 0 15px rgba(255, 152, 0, 0.3), inset 0 0 10px rgba(255, 152, 0, 0.1);
+        }
+        .btn-orange:hover { background: #ff9800; color: #000; box-shadow: 0 0 25px rgba(255, 152, 0, 0.8); }
 
         #warning-flash {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 200px;
-            background: linear-gradient(to top, rgba(255,0,0,0.6), transparent);
-            z-index: 5; opacity: 0; transition: opacity 0.2s; pointer-events: none;
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at bottom, rgba(255,0,0,0.4) 0%, transparent 60%);
+            z-index: 5; opacity: 0; transition: opacity 0.1s; pointer-events: none;
         }
         .warning-active { opacity: 1 !important; }
     </style>
@@ -82,7 +102,7 @@
 
         <div id="ui-layer">
             <div>CITATIONS: <span id="score">0</span></div>
-            <div id="status-indicator"></div>
+            <div id="status-indicator" style="text-align: right;"></div>
         </div>
 
         <!-- Start Screen -->
@@ -90,39 +110,39 @@
             <h1>TENURE RUN</h1>
             <h2>Publish or Perish!</h2>
             
-            <div class="text-content" style="text-align: center;">
-                <strong>CONTROLS:</strong><br><br>
-                [LEFT/RIGHT] or Swipe to switch lanes<br>
-                [UP/SPACE] or Swipe Up to jump<br>
+            <div class="text-content" style="text-align: center; color: #ccc;">
+                <strong>CONTROLS</strong><br><br>
+                <strong>[ ◀ ] [ ▶ ]</strong> or <strong>SWIPE</strong><br>Switch Lanes<br><br>
+                <strong>[ ▲ ]</strong> or <strong>SPACE</strong><br>Jump over APCs
             </div>
 
             <button onclick="startGame()">SUBMIT PAPER</button>
-            <button onclick="showAbout()" style="background: #ffaa00;">ABOUT THE GAME</button>
+            <button class="btn-orange" onclick="showAbout()">ABOUT GAME</button>
         </div>
 
-        <!-- About / Educational Screen -->
+        <!-- About Screen -->
         <div id="about-screen" class="screen hidden">
-            <h1 style="font-size: 20px;">THE ACADEMIC TREADMILL</h1>
+            <h1 style="font-size: 20px; color: #00d2ff; text-shadow:none;">THE TREADMILL</h1>
             <div class="text-content">
-                <p>Welcome to <strong>Tenure Run</strong>! This game represents the struggle of early-career researchers navigating the modern academic publishing landscape.</p>
+                <p>Welcome to <strong>Tenure Run</strong>. Navigate the academic publishing landscape:</p>
                 <ul>
-                    <li>🧱 <strong>Paywalls:</strong> Traditional journals lock knowledge behind subscriptions. Hitting one ends your run!</li>
-                    <li>💸 <strong>APCs (Article Processing Charges):</strong> "Gold" Open Access journals charge massive fees (often $3k+) to publish. Jump over these to save your grant money!</li>
-                    <li>🟦 <strong>Open Science Badges:</strong> Collect these (representing open data/materials) to earn citations!</li>
-                    <li>💎 <strong>Diamond OA:</strong> Completely free to read AND publish. Grants you a shield!</li>
-                    <li>🔓 <strong>Open Access/Preprints:</strong> The Orange Lock. Uploading to a preprint server blasts you above the peer-review delays!</li>
-                    <li>😡 <strong>Reviewer 2:</strong> If you stumble, the dreaded, overly-critical Reviewer 2 will catch you!</li>
+                    <li>🧱 <strong>Paywalls:</strong> Blocks access. Hitting one ends your run!</li>
+                    <li>💸 <strong>APCs (Fees):</strong> Low barrier. Jump over it to save grant money!</li>
+                    <li>🟦 <strong>Open Science:</strong> Blue Hexagon. Collect for citations!</li>
+                    <li>💎 <strong>Diamond OA:</strong> Grants a shield from one crash.</li>
+                    <li>🔓 <strong>Preprint Server:</strong> Orange Lock. Jetpack over peer-review delays!</li>
+                    <li>😡 <strong>Reviewer 2:</strong> Stumble, and they catch you!</li>
                 </ul>
             </div>
-            <button onclick="hideAbout()">BACK TO MENU</button>
+            <button class="btn-orange" onclick="hideAbout()">BACK TO MENU</button>
         </div>
 
         <!-- Game Over Screen -->
         <div id="game-over-screen" class="screen hidden">
-            <h1 style="color: #ff4444;">REJECTED!</h1>
-            <p>Reviewer 2 caught you, or you hit a Paywall.</p>
-            <h2 style="margin-top: 20px;">CITATIONS: <span id="final-score">0</span></h2>
-            <button onclick="startGame()" style="margin-top: 20px;">NEW SUBMISSION</button>
+            <h1 style="color: #ff0055; text-shadow: 0 0 20px #ff0055;">REJECTED!</h1>
+            <p style="color:#aaa;">Reviewer 2 caught you, or you hit a Paywall.</p>
+            <h2 style="margin: 20px 0; color:#fff; font-size:24px;">CITATIONS: <br><span id="final-score" style="color:#00d2ff; font-size:40px;">0</span></h2>
+            <button onclick="startGame()">NEW SUBMISSION</button>
         </div>
     </div>
 
@@ -130,14 +150,10 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const scoreEl = document.getElementById('score');
-        const finalScoreEl = document.getElementById('final-score');
-        const startScreen = document.getElementById('start-screen');
-        const aboutScreen = document.getElementById('about-screen');
-        const gameOverScreen = document.getElementById('game-over-screen');
         const statusIndicator = document.getElementById('status-indicator');
         const warningFlash = document.getElementById('warning-flash');
 
-        // --- AUDIO SYNTHESIS ---
+        // --- AUDIO ENGINE ---
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playSound(type) {
             if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -147,213 +163,136 @@
             const now = audioCtx.currentTime;
             
             if (type === 'coin') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(800, now);
-                osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
-                gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.type = 'sine'; osc.frequency.setValueAtTime(1000, now); osc.frequency.exponentialRampToValueAtTime(1500, now + 0.1);
+                gain.gain.setValueAtTime(0.2, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
                 osc.start(now); osc.stop(now + 0.1);
             } else if (type === 'jump') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(300, now);
-                osc.frequency.exponentialRampToValueAtTime(500, now + 0.2);
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(300, now); osc.frequency.exponentialRampToValueAtTime(600, now + 0.2);
                 gain.gain.setValueAtTime(0.3, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
                 osc.start(now); osc.stop(now + 0.2);
             } else if (type === 'powerup') {
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(400, now);
-                osc.frequency.setValueAtTime(600, now + 0.1);
-                osc.frequency.setValueAtTime(800, now + 0.2);
-                gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
+                osc.type = 'square'; osc.frequency.setValueAtTime(400, now); osc.frequency.setValueAtTime(600, now + 0.1); osc.frequency.setValueAtTime(800, now + 0.2);
+                gain.gain.setValueAtTime(0.15, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
                 osc.start(now); osc.stop(now + 0.4);
             } else if (type === 'crash') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(150, now);
-                osc.frequency.exponentialRampToValueAtTime(40, now + 0.3);
-                gain.gain.setValueAtTime(0.5, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now); osc.frequency.exponentialRampToValueAtTime(40, now + 0.3);
+                gain.gain.setValueAtTime(0.4, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
                 osc.start(now); osc.stop(now + 0.3);
             }
         }
 
-        // --- PIXEL ART DEFINITIONS ---
-        const colors = {
-            'W':'#ffffff', 'B':'#000000', 'R':'#ff4444', 'b':'#1976d2', 'O':'#ff9800', 
-            'G':'#4caf50', 'Y':'#ffeb3b', 'C':'#ffc0cb', 'g':'#9e9e9e', 'd':'#d32f2f'
-        };
-
-        const sprites = {
-            player: [
-                "  BBBB  ",
-                " BCCCCB ",
-                " BCBWCB ", // Glasses
-                " WWWWWW ", // Lab coat
-                " BWWWWb ", // Lab coat + blue tie
-                "  WWWW  ",
-                "  B  B  ", // Shoes
-                "  B  B  "
-            ],
-            player_jump: [
-                "  BBBB  ",
-                " BCCCCB ",
-                " BCBWCB ",
-                "WWWWWWWW", // Arms flailing
-                "  WWWW  ",
-                "  BBBB  ",
-                "        ",
-                "        "
-            ],
-            reviewer: [
-                "  RRRR  ",
-                " RRRRRR ",
-                "RRYRRYRR", // Yellow angry eyes
-                "RRRRRRRR",
-                "RBBBBHBR", // Mouth
-                " RRRRRR "
-            ],
-            os_badge: [
-                "  bbbb  ",
-                " bWWWWb ",
-                "bWWbWWWW", // Data bar 1
-                "bWWbbWWW", // Data bar 2
-                "bWbbbWWW", // Data bar 3
-                " bWWWWb ",
-                "  bbbb  "
-            ],
-            oa_lock: [
-                "  BBB   ", // Open part of lock
-                " B   B  ",
-                " B   B  ",
-                "OOOOOOO ",
-                "OOWWWOO ", // Keyhole
-                "OOWWWOO ",
-                "OOOOOOO "
-            ],
-            diamond: [
-                "  bWWb  ",
-                " bbbbbb ",
-                "WbbbbbbW",
-                " bbbbbb ",
-                "  bbbb  ",
-                "   bb   "
-            ],
-            paywall: [
-                "RRBBRRBB",
-                "BBRRBBBR",
-                "RRBBRRBB",
-                "BBRRBBBR",
-                "RRBBRRBB",
-                "BBRRBBRR"
-            ],
-            apc: [
-                "GGGGGGGG",
-                "GWWWWWWG",
-                "GWGWWGWG", // $ Symbol hint
-                "GWWWWWWG",
-                "GGGGGGGG"
-            ]
-        };
-
-        function drawSprite(ctx, spriteName, x, y, scale) {
-            const sprite = sprites[spriteName];
-            if (!sprite) return;
-            const size = Math.max(1, Math.ceil(scale * 3)); // Scale pixel size
-            const width = sprite[0].length;
-            const height = sprite.length;
-            const startX = x - (width * size) / 2;
-            const startY = y - (height * size); // Origin is at bottom center
-            
-            for(let r=0; r<height; r++) {
-                for(let c=0; c<width; c++) {
+        // --- GRAPHICS: PIXEL ART & DRAWING ---
+        const colors = {'W':'#ffffff', 'B':'#000000', 'C':'#ffc0cb', 'b':'#1976d2', 'g':'#9e9e9e'};
+        const playerSprite = [
+            "  BBBB  ",
+            " BCCCCB ",
+            " BCBWCB ", // Glasses
+            " WWWWWW ", // Lab coat
+            " BWWWWb ", // Lab coat + tie
+            "  WWWW  ",
+            "  B  B  ",
+            "  B  B  "
+        ];
+        
+        function drawPixelSprite(ctx, sprite, x, y, scale) {
+            const size = scale;
+            const w = sprite[0].length * size;
+            const h = sprite.length * size;
+            const startX = x - w/2;
+            const startY = y - h/2;
+            for(let r=0; r<sprite.length; r++) {
+                for(let c=0; c<sprite[r].length; c++) {
                     const char = sprite[r][c];
                     if(char !== ' ') {
-                        ctx.fillStyle = colors[char] || char;
+                        ctx.fillStyle = colors[char];
                         ctx.fillRect(startX + c*size, startY + r*size, size, size);
                     }
                 }
             }
         }
 
-        // --- 3D PERSPECTIVE ENGINE ---
-        const CAM_Z = -100;
-        const CAM_Y = 180;
-        const FOV = 350;
-        const HORIZON_Y = 220;
-        const CENTER_X = 225;
-
-        // Convert 3D world coords to 2D screen coords
-        function project(x, y, z) {
-            const relZ = z - CAM_Z;
-            const scale = FOV / relZ;
-            const screenX = CENTER_X + x * scale;
-            const screenY = HORIZON_Y + (CAM_Y - y) * scale;
-            return { x: screenX, y: screenY, scale: scale };
+        function drawHexBadge(ctx, x, y, size) {
+            ctx.shadowBlur = 15; ctx.shadowColor = "#00d2ff";
+            ctx.fillStyle = "#0055ff";
+            ctx.beginPath();
+            for (let i = 0; i < 6; i++) {
+                let angle = (Math.PI / 3) * i + (Math.PI / 6);
+                ctx.lineTo(x + size * Math.cos(angle), y + size * Math.sin(angle));
+            }
+            ctx.closePath(); ctx.fill();
+            // Inner bars
+            ctx.shadowBlur = 0; ctx.fillStyle = "#fff";
+            ctx.fillRect(x - 6, y + 2, 3, -8);
+            ctx.fillRect(x - 1, y + 2, 3, -12);
+            ctx.fillRect(x + 4, y + 2, 3, -6);
         }
 
-        // Game Constants
-        const LANE_X = [-120, 0, 120]; 
-        const GROUND_Y = 0;
+        function drawLockBadge(ctx, x, y, size) {
+            ctx.shadowBlur = 15; ctx.shadowColor = "#ff9800";
+            ctx.fillStyle = "#ff9800";
+            // Body
+            ctx.fillRect(x - size/2, y, size, size*0.8);
+            // Shackle (Open)
+            ctx.strokeStyle = "#ff9800"; ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(x, y, size*0.4, Math.PI, Math.PI*1.8);
+            ctx.stroke();
+            // Keyhole
+            ctx.shadowBlur = 0; ctx.fillStyle = "#fff";
+            ctx.beginPath(); ctx.arc(x, y + size*0.3, 3, 0, Math.PI*2); ctx.fill();
+            ctx.fillRect(x-1.5, y+size*0.3, 3, 6);
+        }
+
+        // --- GAME ENGINE ---
+        const LANES = [85, 225, 365];
+        const GROUND_Y = 550;
         
-        let isPlaying = false;
-        let score = 0;
-        let gameSpeed = 10;
-        let frameCount = 0;
-        let animationId;
-
-        // State
-        let player = { lane: 1, y: 0, z: 100, isJumping: false, vy: 0, hasShield: false, jetpackTimer: 0 };
-        let reviewerZ = 0; // Distance of reviewer behind player. 100 = safe, 20 = close
+        let isPlaying = false, score = 0, gameSpeed = 8, frameCount = 0, animationId;
+        
+        let player = { lane: 1, x: 225, y: GROUND_Y, isJumping: false, jumpProgress: 0, hasShield: false, jetpackTimer: 0 };
+        let reviewerDist = 100; // 100 = far, 0 = caught
         let entities = [];
+        let particles = [];
 
-        // --- INPUT ---
+        // Input
         document.addEventListener('keydown', (e) => {
             if (!isPlaying) return;
             if (e.key === 'ArrowLeft' || e.key === 'a') if (player.lane > 0) player.lane--;
             if (e.key === 'ArrowRight' || e.key === 'd') if (player.lane < 2) player.lane++;
             if ((e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') && !player.isJumping && player.jetpackTimer <= 0) {
-                player.isJumping = true; player.vy = 20; playSound('jump');
+                player.isJumping = true; player.jumpProgress = 0; playSound('jump');
             }
         });
 
-        let touchStartX = 0, touchStartY = 0;
-        canvas.addEventListener('touchstart', e => {
-            touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY;
-        });
+        let touchX = 0, touchY = 0;
+        canvas.addEventListener('touchstart', e => { touchX = e.touches[0].screenX; touchY = e.touches[0].screenY; });
         canvas.addEventListener('touchend', e => {
             if (!isPlaying) return;
-            let dx = e.changedTouches[0].screenX - touchStartX;
-            let dy = e.changedTouches[0].screenY - touchStartY;
+            let dx = e.changedTouches[0].screenX - touchX;
+            let dy = e.changedTouches[0].screenY - touchY;
             if (Math.abs(dx) > Math.abs(dy)) {
                 if (dx > 30 && player.lane < 2) player.lane++;
                 else if (dx < -30 && player.lane > 0) player.lane--;
             } else {
                 if (dy < -30 && !player.isJumping && player.jetpackTimer <= 0) {
-                    player.isJumping = true; player.vy = 20; playSound('jump');
+                    player.isJumping = true; player.jumpProgress = 0; playSound('jump');
                 }
             }
         });
 
-        // --- UI MENUS ---
-        function showAbout() {
-            startScreen.classList.add('hidden');
-            aboutScreen.classList.remove('hidden');
-        }
-        function hideAbout() {
-            aboutScreen.classList.add('hidden');
-            startScreen.classList.remove('hidden');
-        }
+        // Menus
+        function showAbout() { document.getElementById('start-screen').classList.add('hidden'); document.getElementById('about-screen').classList.remove('hidden'); }
+        function hideAbout() { document.getElementById('about-screen').classList.add('hidden'); document.getElementById('start-screen').classList.remove('hidden'); }
 
-        // --- GAME LOGIC ---
         function startGame() {
-            isPlaying = true; score = 0; gameSpeed = 10; frameCount = 0; entities = [];
-            player = { lane: 1, y: 0, z: 100, isJumping: false, vy: 0, hasShield: false, jetpackTimer: 0 };
-            reviewerZ = -100; // Far behind
-            scoreEl.innerText = score;
-            statusIndicator.innerText = "";
+            isPlaying = true; score = 0; gameSpeed = 8; frameCount = 0; entities = []; particles = [];
+            player = { lane: 1, x: 225, y: GROUND_Y, isJumping: false, jumpProgress: 0, hasShield: false, jetpackTimer: 0 };
+            reviewerDist = 100;
+            scoreEl.innerText = score; statusIndicator.innerText = "";
             warningFlash.classList.remove('warning-active');
-            
-            startScreen.classList.add('hidden');
-            gameOverScreen.classList.add('hidden');
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('game-over-screen').classList.add('hidden');
             if (audioCtx.state === 'suspended') audioCtx.resume();
-            
             animationId = requestAnimationFrame(gameLoop);
         }
 
@@ -361,207 +300,226 @@
             const lane = Math.floor(Math.random() * 3);
             const rand = Math.random();
             let type = '';
-            
             if (rand < 0.5) type = 'os_badge';
             else if (rand < 0.75) type = 'paywall';
             else if (rand < 0.95) type = 'apc';
             else if (rand < 0.98) type = 'diamond';
             else type = 'oa_lock';
 
-            // Check if lane is free at spawn depth (1200)
-            if (!entities.some(e => e.lane === lane && e.z > 1000)) {
-                entities.push({ type: type, lane: lane, z: 1200, marked: false });
+            if (!entities.some(e => e.lane === lane && e.y < 150)) {
+                entities.push({ type: type, lane: lane, x: LANES[lane], y: -50, marked: false });
+            }
+        }
+
+        function spawnParticles(x, y, color, count, isText = null) {
+            if (isText) {
+                particles.push({ text: isText, x: x, y: y, vx: 0, vy: -2, life: 1, maxLife: 1, type: 'text', color: color });
+                return;
+            }
+            for(let i=0; i<count; i++) {
+                particles.push({
+                    x: x, y: y,
+                    vx: (Math.random() - 0.5) * 10,
+                    vy: (Math.random() - 0.5) * 10,
+                    life: Math.random() * 0.5 + 0.5,
+                    maxLife: 1, type: 'spark', color: color, size: Math.random() * 4 + 2
+                });
             }
         }
 
         function gameLoop() {
             if (!isPlaying) return;
             frameCount++;
-            if (frameCount % 600 === 0) gameSpeed += 0.5; // Speed up over time
-            
-            if (frameCount % Math.max(15, Math.floor(60 - gameSpeed)) === 0) spawnEntity();
+            if (frameCount % 600 === 0) gameSpeed += 0.4;
+            if (frameCount % Math.max(20, Math.floor(70 - gameSpeed*1.5)) === 0) spawnEntity();
 
-            update();
-            draw();
+            update(); draw();
             animationId = requestAnimationFrame(gameLoop);
         }
 
         function update() {
-            // Player Jump Physics
+            // Smooth X Movement (Lerp)
+            player.x += (LANES[player.lane] - player.x) * 0.2;
+
+            // Jump Physics
+            let jumpOffset = 0;
             if (player.isJumping) {
-                player.y += player.vy;
-                player.vy -= 1.5; // Gravity
-                if (player.y <= 0) {
-                    player.y = 0; player.isJumping = false;
-                }
+                player.jumpProgress += 0.08;
+                jumpOffset = Math.sin(player.jumpProgress) * 120;
+                if (player.jumpProgress >= Math.PI) { player.isJumping = false; jumpOffset = 0; }
             }
 
-            // Jetpack Logic
+            // Jetpack
             let activeSpeed = gameSpeed;
             if (player.jetpackTimer > 0) {
-                player.jetpackTimer--;
-                player.y = 150; // Fly high
-                activeSpeed = gameSpeed * 2.5;
-                statusIndicator.innerText = "🚀 PREPRINT: " + Math.ceil(player.jetpackTimer/60) + "s";
-                statusIndicator.style.color = "#ff9800";
-            } else if (player.isJumping && player.jetpackTimer <= 0) {
-                // Do nothing, normal jump
+                player.jetpackTimer--; activeSpeed = gameSpeed * 2.5; jumpOffset = 150;
+                statusIndicator.innerHTML = `🚀 <span style="color:#ff9800;">PREPRINT (${Math.ceil(player.jetpackTimer/60)}s)</span>`;
+                spawnParticles(player.x, player.y + 20, (frameCount%2===0)?'#ff9800':'#ff0000', 2);
             } else {
-                if (player.hasShield) {
-                    statusIndicator.innerText = "💎 DIAMOND OA";
-                    statusIndicator.style.color = "#00d2ff";
-                } else { statusIndicator.innerText = ""; }
+                if (player.hasShield) statusIndicator.innerHTML = `💎 <span style="color:#00d2ff;">DIAMOND OA</span>`;
+                else statusIndicator.innerHTML = "";
             }
 
+            player.renderY = GROUND_Y - jumpOffset;
+
             // Reviewer Recovery
-            if (reviewerZ < 0) {
-                reviewerZ -= 1; // Fall back naturally
-                if (reviewerZ < -100) {
-                    reviewerZ = -100;
-                    warningFlash.classList.remove('warning-active');
-                }
+            if (reviewerDist < 100) {
+                reviewerDist += 0.15;
+                if (reviewerDist > 60) warningFlash.classList.remove('warning-active');
             }
 
             // Move Entities
-            entities.forEach(entity => {
-                entity.z -= activeSpeed;
+            entities.forEach(e => {
+                e.y += activeSpeed;
 
-                // Collision
-                if (entity.z > 80 && entity.z < 120 && entity.lane === player.lane && !entity.marked) {
-                    
-                    let isHighUp = player.y > 50;
+                // Collision Detection
+                if (e.lane === player.lane && Math.abs(e.y - GROUND_Y) < 40 && !e.marked) {
+                    let isHighUp = (GROUND_Y - player.renderY) > 50;
 
-                    if (entity.type === 'os_badge') {
-                        score += 10; scoreEl.innerText = score; playSound('coin'); entity.marked = true;
+                    if (e.type === 'os_badge') {
+                        score += 10; scoreEl.innerText = score; playSound('coin'); e.marked = true;
+                        spawnParticles(e.x, e.y, '#00d2ff', 15);
+                        spawnParticles(e.x, e.y - 20, '#00d2ff', 1, "+10");
                     } 
-                    else if (entity.type === 'diamond') {
-                        player.hasShield = true; playSound('powerup'); entity.marked = true;
+                    else if (e.type === 'diamond') {
+                        player.hasShield = true; playSound('powerup'); e.marked = true;
+                        spawnParticles(e.x, e.y, '#00d2ff', 20);
                     }
-                    else if (entity.type === 'oa_lock') {
-                        player.jetpackTimer = 240; playSound('powerup'); entity.marked = true;
+                    else if (e.type === 'oa_lock') {
+                        player.jetpackTimer = 300; playSound('powerup'); e.marked = true;
+                        spawnParticles(e.x, e.y, '#ff9800', 30);
                     }
-                    else if (entity.type === 'paywall' || entity.type === 'apc') {
+                    else if (e.type === 'paywall' || e.type === 'apc') {
                         if (player.jetpackTimer > 0) {
-                            score += 5; scoreEl.innerText = score; entity.marked = true; return; // Smash
+                            score += 5; scoreEl.innerText = score; e.marked = true; 
+                            spawnParticles(e.x, e.y, '#ff0055', 20); return; 
                         }
-                        if (entity.type === 'apc' && isHighUp) return; // Jumped over APC
+                        if (e.type === 'apc' && isHighUp) return; // Safely jumped
 
                         // CRASH
-                        playSound('crash');
-                        entity.marked = true;
+                        playSound('crash'); e.marked = true;
+                        spawnParticles(e.x, e.y, '#ff0000', 30);
 
-                        if (player.hasShield) {
-                            player.hasShield = false; stumble();
-                        } else {
-                            if (entity.type === 'paywall' || reviewerZ > 50) gameOver();
+                        if (player.hasShield) { player.hasShield = false; stumble(); } 
+                        else {
+                            if (e.type === 'paywall' || reviewerDist < 50) gameOver();
                             else stumble();
                         }
                     }
                 }
+                if (e.y > 800) e.marked = true;
             });
 
-            entities = entities.filter(e => e.z > CAM_Z && !e.marked);
+            entities = entities.filter(e => !e.marked);
+
+            // Update Particles
+            particles.forEach(p => {
+                p.x += p.vx; p.y += p.vy; p.life -= 0.02;
+            });
+            particles = particles.filter(p => p.life > 0);
         }
 
         function stumble() {
-            reviewerZ = 80; // Reviewer gets right behind player
+            reviewerDist = 15;
             warningFlash.classList.add('warning-active');
-            canvas.style.transform = "translate(10px, 10px)";
-            setTimeout(() => canvas.style.transform = "translate(-10px, -10px)", 50);
+            canvas.style.transform = "translate(15px, 0px)";
+            setTimeout(() => canvas.style.transform = "translate(-15px, 0px)", 50);
             setTimeout(() => canvas.style.transform = "translate(0, 0)", 100);
         }
 
         function gameOver() {
-            isPlaying = false;
-            cancelAnimationFrame(animationId);
-            finalScoreEl.innerText = score;
-            gameOverScreen.classList.remove('hidden');
+            isPlaying = false; cancelAnimationFrame(animationId);
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('game-over-screen').classList.remove('hidden');
         }
 
-        // --- RENDER ---
+        // --- RENDER ENGINE ---
         function draw() {
-            // Sky & Ground
-            ctx.fillStyle = '#1e1e2f'; // Night Sky
-            ctx.fillRect(0, 0, canvas.width, HORIZON_Y);
-            ctx.fillStyle = '#2c3e50'; // Ground
-            ctx.fillRect(0, HORIZON_Y, canvas.width, canvas.height - HORIZON_Y);
-
-            // Draw Track Lines
-            ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
-            const borders = [-60, 60]; // Lane dividers
-            borders.forEach(bx => {
-                ctx.beginPath();
-                let p1 = project(bx, 0, 1200); let p2 = project(bx, 0, CAM_Z);
-                ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
-            });
-
-            // Draw scrolling horizontal segments
-            const segLength = 150;
-            const offset = (frameCount * (gameSpeed * 0.5)) % segLength;
-            ctx.strokeStyle = '#444';
-            for(let z = 1200; z > CAM_Z; z -= segLength) {
-                let actualZ = z - offset;
-                if(actualZ < CAM_Z) continue;
-                let pL = project(-180, 0, actualZ); let pR = project(180, 0, actualZ);
-                ctx.beginPath(); ctx.moveTo(pL.x, pL.y); ctx.lineTo(pR.x, pR.y); ctx.stroke();
-            }
-
-            // Create Render List to sort by Depth (Z)
-            let renderList = [];
+            // Background Grid (Synthwave style)
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.lineWidth = 2;
             
-            // Add Entities
-            entities.forEach(e => {
-                renderList.push({ type: e.type, x: LANE_X[e.lane], y: (e.type==='apc'? 0 : 30), z: e.z });
+            // Vertical lane markers
+            ctx.shadowBlur = 10; ctx.shadowColor = "#ff007f";
+            ctx.strokeStyle = "rgba(255, 0, 127, 0.5)";
+            [155, 295].forEach(x => {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 700); ctx.stroke();
             });
 
-            // Add Player
-            renderList.push({ type: 'player', x: LANE_X[player.lane], y: player.y, z: player.z });
+            // Horizontal moving grid lines
+            ctx.shadowColor = "#00d2ff"; ctx.strokeStyle = "rgba(0, 210, 255, 0.3)";
+            const offset = (frameCount * gameSpeed) % 100;
+            for(let y = offset - 100; y < 800; y += 100) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(450, y); ctx.stroke();
+            }
+            ctx.shadowBlur = 0; // Reset
 
-            // Add Reviewer
-            if (reviewerZ > 0) {
-                renderList.push({ type: 'reviewer', x: LANE_X[player.lane], y: 20, z: reviewerZ });
+            // Sort entities so low Y (top of screen) draws first
+            entities.sort((a,b) => a.y - b.y);
+
+            // Draw Entities
+            ctx.textAlign = "center"; ctx.textBaseline = "middle";
+            entities.forEach(e => {
+                // Drop shadow
+                ctx.fillStyle = "rgba(0,0,0,0.6)";
+                ctx.beginPath(); ctx.ellipse(e.x, e.y + 20, 25, 8, 0, 0, Math.PI*2); ctx.fill();
+
+                if (e.type === 'os_badge') drawHexBadge(ctx, e.x, e.y, 16);
+                else if (e.type === 'oa_lock') drawLockBadge(ctx, e.x, e.y, 18);
+                else {
+                    ctx.font = e.type === 'paywall' ? "60px Arial" : "35px Arial";
+                    let yOff = e.type === 'apc' ? 15 : 0;
+                    ctx.shadowBlur = 20; 
+                    ctx.shadowColor = e.type === 'paywall' ? "red" : (e.type === 'apc' ? "yellow" : "cyan");
+                    ctx.fillText(e.type === 'paywall' ? "🧱" : (e.type === 'apc' ? "💸" : "💎"), e.x, e.y + yOff);
+                    ctx.shadowBlur = 0;
+                }
+            });
+
+            // Draw Player Shadow
+            let shadowScale = Math.max(0.2, 1 - ((GROUND_Y - player.renderY) / 200));
+            ctx.fillStyle = "rgba(0,0,0,0.6)";
+            ctx.beginPath(); ctx.ellipse(player.x, GROUND_Y + 25, 25 * shadowScale, 8 * shadowScale, 0, 0, Math.PI*2); ctx.fill();
+
+            // Shield Aura
+            if (player.hasShield) {
+                ctx.shadowBlur = 20; ctx.shadowColor = "#00d2ff";
+                ctx.beginPath(); ctx.arc(player.x, player.renderY, 40, 0, Math.PI*2);
+                ctx.fillStyle = "rgba(0, 210, 255, 0.2)"; ctx.fill();
+                ctx.strokeStyle = "#00d2ff"; ctx.lineWidth = 3; ctx.stroke();
+                ctx.shadowBlur = 0;
             }
 
-            // Sort descending by Z
-            renderList.sort((a, b) => b.z - a.z);
+            // Draw Player (Pixel Art)
+            ctx.shadowBlur = 10; ctx.shadowColor = "rgba(255,255,255,0.5)";
+            drawPixelSprite(ctx, playerSprite, player.x, player.renderY, 5);
+            ctx.shadowBlur = 0;
 
-            // Draw everything
-            renderList.forEach(item => {
-                let p = project(item.x, item.y, item.z);
-                
-                // Draw Shadow for floating things
-                if (item.y > 0) {
-                    let pGround = project(item.x, 0, item.z);
-                    let shadowSize = Math.max(2, 20 * p.scale * (1 - (item.y / 200)));
-                    ctx.fillStyle = 'rgba(0,0,0,0.5)';
-                    ctx.beginPath(); ctx.ellipse(pGround.x, pGround.y, shadowSize, shadowSize*0.4, 0, 0, Math.PI*2); ctx.fill();
+            // Draw Reviewer 2
+            if (reviewerDist < 100) {
+                let revY = 750 - (100 - reviewerDist) * 3;
+                ctx.shadowBlur = 30; ctx.shadowColor = "red";
+                ctx.font = "80px Arial"; ctx.fillText("😡", player.x, revY);
+                ctx.fillStyle = "#ff0055"; ctx.font = "bold 16px Roboto Mono";
+                ctx.fillText("REVIEWER 2", player.x, revY + 50);
+                ctx.shadowBlur = 0;
+            }
+
+            // Draw Particles
+            particles.forEach(p => {
+                ctx.globalAlpha = p.life / p.maxLife;
+                if (p.type === 'text') {
+                    ctx.fillStyle = p.color; ctx.font = "bold 20px Roboto Mono";
+                    ctx.shadowBlur = 10; ctx.shadowColor = p.color;
+                    ctx.fillText(p.text, p.x, p.y);
+                    ctx.shadowBlur = 0;
+                } else {
+                    ctx.fillStyle = p.color;
+                    ctx.shadowBlur = 10; ctx.shadowColor = p.color;
+                    ctx.fillRect(p.x, p.y, p.size, p.size);
+                    ctx.shadowBlur = 0;
                 }
-
-                // Shield Aura
-                if (item.type === 'player' && player.hasShield) {
-                    ctx.beginPath(); ctx.arc(p.x, p.y - 30 * p.scale, 40 * p.scale, 0, Math.PI*2);
-                    ctx.fillStyle = 'rgba(0, 210, 255, 0.4)'; ctx.fill();
-                    ctx.strokeStyle = '#00d2ff'; ctx.lineWidth = 2; ctx.stroke();
-                }
-
-                // Jetpack flames
-                if (item.type === 'player' && player.jetpackTimer > 0) {
-                    ctx.fillStyle = (frameCount % 4 < 2) ? '#ff9800' : '#ffeb3b';
-                    ctx.beginPath(); ctx.arc(p.x, p.y + 10 * p.scale, 15 * p.scale, 0, Math.PI*2); ctx.fill();
-                }
-
-                // Determine sprite string
-                let spriteName = item.type;
-                if (item.type === 'player' && player.y > 10) spriteName = 'player_jump';
-
-                // Draw the pixel art
-                drawSprite(ctx, spriteName, p.x, p.y, p.scale);
-                
-                // Extra text/warning for Reviewer
-                if (item.type === 'reviewer') {
-                    ctx.fillStyle = 'red'; ctx.font = `${Math.floor(10 * p.scale)}px Roboto Mono`;
-                    ctx.textAlign = 'center'; ctx.fillText("REV 2", p.x, p.y + 15 * p.scale);
-                }
+                ctx.globalAlpha = 1;
             });
         }
     </script>

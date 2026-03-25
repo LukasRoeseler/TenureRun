@@ -1,9 +1,6 @@
 # Tenure Run: Publish or Perish!
 
-**Tenure Run** is a 3D browser-based endless runner game built in a single HTML file. It serves as a fun, satirical, and educational metaphor for the modern academic publishing landscape, specifically focusing on the concepts of Open Access, Article Processing Charges (APCs), Paywalls, and Preprints.
-
-## 🎮 Play the Game
-*(Add your GitHub pages link here once deployed: `https://[username].github.io/tenure-run/`)*
+**Tenure Run** is a browser-based endless runner game built in a single HTML file. It serves as a fun, satirical, and educational metaphor for the modern academic publishing landscape, specifically focusing on the concepts of Open Access, Article Processing Charges (APCs), Paywalls, and Preprints.
 
 ## 🧠 The Educational Metaphor
 This game was designed for early Master's and first-year PhD students to introduce them to the realities of "Publish or Perish":
@@ -20,11 +17,3 @@ This game was designed for early Master's and first-year PhD students to introdu
 *   **Zero Assets:** The game does not require any external image or audio files. 
 *   **Custom Pixel Art:** All graphics are defined as string arrays inside the JavaScript and drawn directly to the HTML5 `<canvas>` using `fillRect`.
 *   **Web Audio API:** All sound effects (jumping, crashing, collecting coins) are synthesized dynamically in the browser.
-*   **Pseudo-3D Engine:** Uses a custom perspective projection matrix (Mode 7 style) to convert 3D coordinates (X, Y, Z) into 2D screen space, creating the illusion of moving forward through a 3D world.
-
-## 💻 How to Host
-Since the game is contained entirely within `index.html`, you can host it for free in seconds using GitHub Pages:
-1. Fork or clone this repository.
-2. Go to **Settings > Pages**.
-3. Set the source to the `main` branch.
-4. Your game will be live in minutes!

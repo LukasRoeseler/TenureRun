@@ -19,7 +19,6 @@
             position: relative; 
             width: 100vw; max-width: 450px; 
             height: 100vh; max-height: 700px;
-            background: #7ac5f7; /* Sky Blue */
             border: 4px solid #111; 
             box-shadow: 0 10px 40px rgba(0,0,0,0.8);
             overflow: hidden;
@@ -40,7 +39,7 @@
 
         .screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             display: flex; flex-direction: column;
             justify-content: center; align-items: center;
             color: #111; z-index: 20; text-align: center;
@@ -84,8 +83,8 @@
             box-shadow: 4px 4px 0px #1a252f;
         }
         button:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #1a252f; }
-        .btn-orange { background: #e67e22; border-color: #d35400; }
         .btn-green { background: #27ae60; border-color: #16a085; }
+        .btn-orange { background: #e67e22; border-color: #d35400; }
 
         #warning-flash {
             position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
@@ -94,7 +93,6 @@
         }
         .warning-active { opacity: 1 !important; }
 
-        /* Mobile specific adjustments */
         @media (max-width: 400px) {
             h1 { font-size: 18px; }
             .text-content { font-size: 11px; }
@@ -120,29 +118,31 @@
             <h1>TENURE RUN</h1>
             <h2>Publish or Perish!</h2>
             <div class="btn-container">
-                <button onclick="startGame()">PUBLISH OR PERISH</button>
-                <button class="btn-orange" onclick="showScreen('tutorial-screen')">TUTORIAL</button>
+                <button onclick="showScreen('tutorial-screen')">PUBLISH OR PERISH</button>
                 <button class="btn-green" onclick="showScreen('about-screen')">ABOUT</button>
             </div>
         </div>
 
-        <!-- Tutorial Screen -->
+        <!-- Tutorial Screen (Shown before game starts) -->
         <div id="tutorial-screen" class="screen hidden">
             <h1 style="font-size: 18px;">TUTORIAL</h1>
             <div class="text-content">
-                <strong>CONTROLS:</strong> Swipe Left/Right to change lanes. Swipe Up to jump.<br><br>
+                <strong>CONTROLS:</strong> Swipe Left/Right (or Arrows) to change lanes. Swipe Up (or Space) to jump.<br><br>
                 <strong>THE TREADMILL:</strong>
                 <ul>
-                    <li>📄 <strong>Papers:</strong> Collect for +1 Publication.</li>
-                    <li>🟦 <strong>Open Data:</strong> Collect for +2 Publications.</li>
-                    <li>📜 <strong>Grants:</strong> Protects you from up to 3 APC fees!</li>
-                    <li>🟪 <strong>p-Hacking:</strong> The 'p' boosts speed drastically! Dangerous (no protection), but gets pubs fast.</li>
+                    <li>📄 <strong>Papers:</strong> Collect for +1 Pub.</li>
+                    <li>🟦 <strong>Open Data:</strong> Collect for +2 Pubs.</li>
+                    <li>📜 <strong>Grants:</strong> Protects you from 3 APCs.</li>
+                    <li>🟪 <strong>p-Hacking:</strong> The 'p' boosts speed drastically! Dangerous (no APC protection), but gets pubs fast.</li>
                     <li>🧱 <strong>Paywalls:</strong> Too high to jump. Instant rejection!</li>
                     <li><strong style="color:red;">$</strong> <strong>APCs:</strong> Jump over these fees, or use a Grant.</li>
                     <li>😡 <strong>Reviewer 2:</strong> Stumble, and they catch you!</li>
                 </ul>
             </div>
-            <button class="btn-orange" onclick="showScreen('start-screen')">BACK</button>
+            <div class="btn-container">
+                <button class="btn-orange" onclick="startGame()">START RUN</button>
+                <button onclick="showScreen('start-screen')">BACK</button>
+            </div>
         </div>
 
         <!-- About Screen -->
@@ -154,19 +154,22 @@
                 <p>Researchers worldwide are pushing for fairer evaluations by signing <strong><a href="https://sfdora.org/" target="_blank">SF DORA</a></strong> and joining <strong><a href="https://coara.eu/" target="_blank">CoARA</a></strong> (this game is not affiliated with them). Everyone can sign SF DORA to support assessing research on its own merits rather than journal metrics.</p>
                 <p>To join a large community concerned with Open Science and social justice, visit <strong><a href="https://forrt.org/" target="_blank">FORRT.org</a></strong>.</p>
             </div>
-            <button class="btn-green" onclick="showScreen('start-screen')">BACK</button>
+            <button class="btn-green" onclick="showScreen('start-screen')">BACK TO MENU</button>
         </div>
 
         <!-- Game Over Screen -->
         <div id="game-over-screen" class="screen hidden">
-            <h1 style="color: #c0392b; font-size: 18px;">You did not get a permanent position.</h1>
-            <h2 style="margin: 10px 0; color:#333;">Total Publications: <span id="final-score" style="color:#2980b9;">0</span></h2>
-            <h2 style="margin: 5px 0; color:#27ae60; font-size:14px;">Final Rank: <span id="final-level"></span></h2>
+            <h1 style="color: #c0392b; font-size: 18px; line-height: 1.6;">You did not get a<br>permanent position.</h1>
+            <h2 style="margin: 10px 0; color:#333;">Publications: <span id="final-score" style="color:#2980b9;">0</span></h2>
+            <h2 style="margin: 5px 0 15px 0; color:#27ae60; font-size:14px;">Final Rank: <span id="final-level"></span></h2>
             
-            <div class="text-content" style="font-size: 11px;">
+            <div class="text-content" style="font-size: 11px; text-align: center;">
                 Research assessment is tough, often prioritizing quantity over quality, but the system is changing. Researchers worldwide are signing <strong>SF DORA</strong> and joining <strong>CoARA</strong> to push for fairer evaluations—and you can sign SF DORA too!
             </div>
-            <button onclick="startGame()">NEW SUBMISSION</button>
+            <div class="btn-container">
+                <button onclick="showScreen('tutorial-screen')">NEW SUBMISSION</button>
+                <button class="btn-green" onclick="showScreen('about-screen')">LEARN MORE</button>
+            </div>
         </div>
     </div>
 
@@ -180,7 +183,10 @@
 
         function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
+            if (id) {
+                const el = document.getElementById(id);
+                if (el) el.classList.remove('hidden');
+            }
         }
 
         // --- AUDIO ENGINE ---
@@ -217,7 +223,7 @@
                     let gain = audioCtx.createGain(); gain.connect(audioCtx.destination);
                     let osc = audioCtx.createOscillator(); osc.type = (player.phackTimer > 0) ? 'sawtooth' : 'square';
                     osc.frequency.setValueAtTime(getFreq(mNote), nextNoteTime); osc.connect(gain);
-                    gain.gain.setValueAtTime(0.05, nextNoteTime); gain.gain.exponentialRampToValueAtTime(0.001, nextNoteTime + 0.15);
+                    gain.gain.setValueAtTime(0.04, nextNoteTime); gain.gain.exponentialRampToValueAtTime(0.001, nextNoteTime + 0.15);
                     osc.start(nextNoteTime); osc.stop(nextNoteTime + 0.15);
                 }
 
@@ -225,7 +231,7 @@
                     let gain = audioCtx.createGain(); gain.connect(audioCtx.destination);
                     let osc = audioCtx.createOscillator(); osc.type = 'triangle';
                     osc.frequency.setValueAtTime(getFreq(bNote), nextNoteTime); osc.connect(gain);
-                    gain.gain.setValueAtTime(0.2, nextNoteTime); gain.gain.exponentialRampToValueAtTime(0.01, nextNoteTime + 0.2);
+                    gain.gain.setValueAtTime(0.15, nextNoteTime); gain.gain.exponentialRampToValueAtTime(0.01, nextNoteTime + 0.2);
                     osc.start(nextNoteTime); osc.stop(nextNoteTime + 0.2);
                 }
                 
@@ -246,26 +252,26 @@
             
             if (type === 'coin') {
                 osc.type = 'sine'; osc.frequency.setValueAtTime(1000, now); osc.frequency.exponentialRampToValueAtTime(1500, now + 0.1);
-                gain.gain.setValueAtTime(0.2, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                gain.gain.setValueAtTime(0.15, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
                 osc.start(now); osc.stop(now + 0.1);
             } else if (type === 'jump') {
                 osc.type = 'triangle'; osc.frequency.setValueAtTime(300, now); osc.frequency.exponentialRampToValueAtTime(600, now + 0.2);
-                gain.gain.setValueAtTime(0.3, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+                gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
                 osc.start(now); osc.stop(now + 0.2);
             } else if (type === 'crash') {
                 osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now); osc.frequency.exponentialRampToValueAtTime(40, now + 0.3);
-                gain.gain.setValueAtTime(0.4, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
                 osc.start(now); osc.stop(now + 0.3);
             } else if (type === 'grant') {
                 osc.type = 'square'; osc.frequency.setValueAtTime(600, now); osc.frequency.setValueAtTime(800, now + 0.1);
-                gain.gain.setValueAtTime(0.15, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
                 osc.start(now); osc.stop(now + 0.3);
             } else if (type === 'levelup') {
                 osc.type = 'square';
-                [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => { // C5, E5, G5, C6
+                [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
                     osc.frequency.setValueAtTime(freq, now + i*0.1);
                 });
-                gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0, now + 0.5);
+                gain.gain.setValueAtTime(0.15, now); gain.gain.linearRampToValueAtTime(0, now + 0.5);
                 osc.start(now); osc.stop(now + 0.5);
             }
         }
@@ -275,7 +281,7 @@
             { name: "PhD Student", req: 0, 
               sprite: ["  BBBB  ", " BCCCCB ", " BCBWCB ", " WWWWWW ", " BWWWWb ", "  WWWW  ", "  B  B  ", "  B  B  "] },
             { name: "Postdoc", req: 3, 
-              sprite: ["  BBBB  ", " BCCCCB ", " BCCCgB ", " gggggg ", " BggWgb ", "  gggg  ", "  B  B  ", "  B  B  "] }, // Grey coat, tired
+              sprite: ["  BBBB  ", " BCCCCB ", " BCCCgB ", " gggggg ", " BggWgb ", "  gggg  ", "  B  B  ", "  B  B  "] }, // Grey coat
             { name: "Lecturer", req: 9, 
               sprite: ["  BBBB  ", " BCCCCB ", " BCBWCB ", " BBBBBB ", " WBBBBW ", "  BBBB  ", "  B  B  ", "  B  B  "] }, // Suit
             { name: "Asst. Prof", req: 21, 
@@ -292,8 +298,8 @@
             pubs += amount;
             pubsEl.innerText = pubs;
             
-            // Check Level Up
-            if (currentLevel < levels.length - 1 && pubs >= levels[currentLevel + 1].req) {
+            // Check Level Up (use loop in case they skip levels)
+            while (currentLevel < levels.length - 1 && pubs >= levels[currentLevel + 1].req) {
                 currentLevel++;
                 levelEl.innerText = levels[currentLevel].name;
                 playSound('levelup');
@@ -327,6 +333,7 @@
         let player = { lane: 1, x: 225, renderY: GROUND_Y, isJumping: false, jumpProgress: 0, grantCharges: 0, phackTimer: 0 };
         let reviewerDist = 100;
         let entities = [], particles = [], textLines = [], pageBreaks = [];
+        let pageNum = 2;
         
         const academicWords = ["Abstract", "Methodology", "Results", "p < 0.05", "N = 342", "Analysis", "Discussion", "Conclusion", "Data Set", "Variables", "Significance", "Reviewer"];
 
@@ -360,7 +367,7 @@
         }, {passive: false});
 
         function startGame() {
-            isPlaying = true; pubs = 0; currentLevel = 0; gameSpeed = 5; frameCount = 0; 
+            isPlaying = true; pubs = 0; currentLevel = 0; gameSpeed = 5; frameCount = 0; pageNum = 2;
             entities = []; particles = []; textLines = []; pageBreaks = [];
             
             pubsEl.innerText = pubs; levelEl.innerText = levels[0].name;
@@ -373,7 +380,7 @@
             statusIndicator.innerText = "";
             warningFlash.classList.remove('warning-active');
             
-            showScreen(''); // Hide all screens
+            showScreen(''); // Hide all screens to show canvas
             
             if (audioCtx.state === 'suspended') audioCtx.resume();
             clearTimeout(bgmTimer); bgmStep = 0; nextNoteTime = audioCtx.currentTime + 0.1;
@@ -388,13 +395,11 @@
             textLines.push({ y: yStart, text: str });
         }
 
-        let pageNum = 2;
         function spawnEntity() {
             const lane = Math.floor(Math.random() * 3);
             const rand = Math.random();
             let type = '';
             
-            // Item Probabilities
             if (rand < 0.30) type = 'paper';
             else if (rand < 0.45) type = 'os_badge';
             else if (rand < 0.70) type = 'paywall';
@@ -402,9 +407,8 @@
             else if (rand < 0.95) type = 'grant';
             else type = 'phack';
 
-            // Prevent unavoidable walls
             let inRow = entities.filter(e => e.y < 100 && e.type === 'paywall');
-            if (type === 'paywall' && inRow.length >= 2) type = 'apc'; // Downgrade if blocking
+            if (type === 'paywall' && inRow.length >= 2) type = 'apc'; 
 
             if (!entities.some(e => e.lane === lane && e.y < 150)) {
                 entities.push({ type: type, lane: lane, x: LANES[lane], y: -50, marked: false });
@@ -427,22 +431,20 @@
         function gameLoop() {
             if (!isPlaying) return;
             frameCount++;
-            if (frameCount % 600 === 0) gameSpeed += 0.3; // Gradual speedup
+            if (frameCount % 600 === 0) gameSpeed += 0.3; 
             
             let speedMult = (player.phackTimer > 0) ? 1.5 : 1;
             let activeSpeed = gameSpeed * speedMult;
 
-            // Passive Publications
-            if (frameCount % (60 * 4) === 0) addPubs(1); // 1 pub every 4 seconds
+            // Passive Publications (Every 4 real seconds at 60fps)
+            if (frameCount % 240 === 0) addPubs(1); 
 
             if (frameCount % Math.floor(40/activeSpeed) === 0) spawnTextLine(-20);
             
-            // Page breaks
             if (frameCount % Math.floor(400/activeSpeed) === 0) {
                 pageBreaks.push({y: -50, page: pageNum++});
             }
 
-            // Spawn rate scales with speed to keep density high
             if (frameCount % Math.max(15, Math.floor(60 - activeSpeed*2)) === 0) spawnEntity();
 
             update(activeSpeed, speedMult); 
@@ -453,35 +455,29 @@
         function update(activeSpeed, speedMult) {
             player.x += (LANES[player.lane] - player.x) * 0.25;
 
-            // P-Hacking Timer
             if (player.phackTimer > 0) player.phackTimer--;
 
-            // Jump Physics
             let jumpOffset = 0;
             if (player.isJumping) {
-                player.jumpProgress += 0.08 * speedMult; // Jump faster if running faster
+                player.jumpProgress += 0.08 * speedMult; 
                 jumpOffset = Math.sin(player.jumpProgress) * 120;
                 if (player.jumpProgress >= Math.PI) { player.isJumping = false; jumpOffset = 0; }
             }
             player.renderY = GROUND_Y - jumpOffset;
 
-            // Update HUD status
             let statusHtml = "";
             if (player.grantCharges > 0) statusHtml += `📜 GRANTS: ${player.grantCharges}x `;
-            if (player.phackTimer > 0) statusHtml += `<br><span style="color:#8e44ad;">P-HACKING (${Math.ceil(player.phackTimer/60)}s)</span>`;
+            if (player.phackTimer > 0) statusHtml += `<br><span style="color:#8e44ad; text-shadow:0 0 5px #fff;">p-HACKING (${Math.ceil(player.phackTimer/60)}s)</span>`;
             statusIndicator.innerHTML = statusHtml;
 
-            // Move Environment
             textLines.forEach(t => t.y += activeSpeed); textLines = textLines.filter(t => t.y < 800);
             pageBreaks.forEach(p => p.y += activeSpeed); pageBreaks = pageBreaks.filter(p => p.y < 800);
 
-            // Reviewer Recovery
             if (reviewerDist < 100) {
                 reviewerDist += 0.15;
                 if (reviewerDist > 60) warningFlash.classList.remove('warning-active');
             }
 
-            // Move Entities
             entities.forEach(e => {
                 e.y += activeSpeed;
 
@@ -507,16 +503,16 @@
                     else if (e.type === 'paywall') {
                         playSound('crash'); e.marked = true;
                         spawnParticles(e.x, e.y, '#c0392b', 30);
-                        gameOver(); // Grants do NOT stop paywalls
+                        gameOver(); 
                     }
                     else if (e.type === 'apc') {
-                        if (e.type === 'apc' && isHighUp) return; // Jumped over safely
+                        if (e.type === 'apc' && isHighUp) return; 
 
                         playSound('crash'); e.marked = true;
                         spawnParticles(e.x, e.y, '#c0392b', 30);
 
                         if (player.grantCharges > 0) { 
-                            player.grantCharges--; // Grant pays the fee
+                            player.grantCharges--; 
                         } else {
                             if (reviewerDist < 50) gameOver();
                             else stumble();
@@ -528,7 +524,6 @@
 
             entities = entities.filter(e => !e.marked);
 
-            // Update Particles
             particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.life -= 0.02; });
             particles = particles.filter(p => p.life > 0);
         }
@@ -552,41 +547,34 @@
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Draw Giant Manuscript Paper
             ctx.fillStyle = '#f9f9f9';
             ctx.shadowBlur = 20; ctx.shadowColor = "rgba(0,0,0,0.5)";
             ctx.fillRect(PAPER_X, 0, PAPER_WIDTH, 700);
             ctx.shadowBlur = 0;
 
-            // Page Breaks & Numbers
             pageBreaks.forEach(p => {
                 ctx.fillStyle = '#ddd'; ctx.fillRect(PAPER_X, p.y, PAPER_WIDTH, 4);
-                ctx.fillStyle = '#aaa'; ctx.font = "12px Arial"; ctx.textAlign = "center";
+                ctx.fillStyle = '#aaa'; ctx.font = "bold 14px Arial"; ctx.textAlign = "center";
                 ctx.fillText("- " + p.page + " -", PAPER_X + PAPER_WIDTH/2, p.y + 20);
             });
 
-            // Manuscript Lines (Lanes)
             ctx.strokeStyle = 'rgba(0,0,0,0.05)'; ctx.lineWidth = 2;
             [162.5, 287.5].forEach(x => {
                 ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 700); ctx.stroke();
             });
 
-            // Faint Text
             ctx.fillStyle = 'rgba(0, 0, 0, 0.06)'; 
             ctx.font = "16px 'Times New Roman', serif"; ctx.textAlign = "left";
             textLines.forEach(t => { ctx.fillText(t.text, PAPER_X + 15, t.y); });
 
-            // Sort Entities
             entities.sort((a,b) => a.y - b.y);
             ctx.textAlign = "center"; ctx.textBaseline = "middle";
 
             entities.forEach(e => {
-                // Drop shadow
                 ctx.fillStyle = "rgba(0,0,0,0.2)";
                 ctx.beginPath(); ctx.ellipse(e.x, e.y + 15, 25, 6, 0, 0, Math.PI*2); ctx.fill();
 
                 if (e.type === 'os_badge') {
-                    // Blue Hexagon
                     ctx.fillStyle = "#2980b9"; ctx.beginPath();
                     for (let i=0; i<6; i++) { let angle = (Math.PI/3)*i + (Math.PI/6); ctx.lineTo(e.x + 16*Math.cos(angle), e.y + 16*Math.sin(angle)); }
                     ctx.closePath(); ctx.fill();
@@ -598,12 +586,11 @@
                     ctx.fillStyle = '#333'; ctx.fillRect(e.x-8, e.y-8, 16, 2); ctx.fillRect(e.x-8, e.y-2, 16, 2); ctx.fillRect(e.x-8, e.y+4, 10, 2);
                 }
                 else if (e.type === 'grant') {
-                    // Scroll/Money
-                    ctx.fillStyle = '#f1c40f'; ctx.fillRect(e.x-15, e.y-10, 30, 20); // paper
-                    ctx.fillStyle = '#27ae60'; ctx.fillRect(e.x-5, e.y-12, 10, 24);  // ribbon
+                    ctx.fillStyle = '#f1c40f'; ctx.fillRect(e.x-15, e.y-10, 30, 20); 
+                    ctx.fillStyle = '#27ae60'; ctx.fillRect(e.x-5, e.y-12, 10, 24);  
                 }
                 else if (e.type === 'phack') {
-                    ctx.fillStyle = '#8e44ad'; ctx.font = "bold 40px 'Times New Roman'";
+                    ctx.fillStyle = '#8e44ad'; ctx.font = "bold 44px 'Times New Roman'";
                     ctx.fillText("p", e.x, e.y);
                 }
                 else if (e.type === 'paywall') {
@@ -618,28 +605,23 @@
                 }
             });
 
-            // Player Shadow
             let shadowScale = Math.max(0.2, 1 - ((GROUND_Y - player.renderY) / 200));
             ctx.fillStyle = "rgba(0,0,0,0.3)";
             ctx.beginPath(); ctx.ellipse(player.x, GROUND_Y + 20, 25 * shadowScale, 6 * shadowScale, 0, 0, Math.PI*2); ctx.fill();
 
-            // P-Hack Aura (Purple glow)
             if (player.phackTimer > 0) {
                 ctx.beginPath(); ctx.arc(player.x, player.renderY - 15, 35, 0, Math.PI*2);
                 ctx.fillStyle = "rgba(142, 68, 173, 0.4)"; ctx.fill();
             }
 
-            // Draw Player Sprite (based on level)
             drawPixelSprite(ctx, levels[currentLevel].sprite, player.x, player.renderY, 5);
 
-            // Reviewer 2
             if (reviewerDist < 100) {
                 let revY = 750 - (100 - reviewerDist) * 3;
                 ctx.font = "80px Arial"; ctx.fillText("😡", player.x, revY);
                 ctx.fillStyle = "#c0392b"; ctx.font = "bold 16px Roboto Mono"; ctx.fillText("REVIEWER 2", player.x, revY + 50);
             }
 
-            // Particles
             particles.forEach(p => {
                 ctx.globalAlpha = p.life / p.maxLife;
                 if (p.type === 'text') {
@@ -650,11 +632,6 @@
                 ctx.globalAlpha = 1;
             });
         }
-
-        // Handle resizing for mobile
-        window.addEventListener('resize', () => {
-            // Keep internal logic 450x700, CSS handles the scaling
-        });
     </script>
 </body>
 </html>

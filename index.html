@@ -2,94 +2,103 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tenure Run</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto+Mono:wght@700&display=swap');
 
         body {
             margin: 0; padding: 0;
-            background-color: #2c3e50;
+            background-color: #1a252f;
             display: flex; justify-content: center; align-items: center;
             height: 100vh; font-family: 'Roboto Mono', monospace;
             overflow: hidden; touch-action: none;
         }
 
         #game-container {
-            position: relative; width: 450px; height: 700px;
+            position: relative; 
+            width: 100vw; max-width: 450px; 
+            height: 100vh; max-height: 700px;
             background: #7ac5f7; /* Sky Blue */
-            border: 6px solid #1a252f; border-radius: 12px;
+            border: 4px solid #111; 
             box-shadow: 0 10px 40px rgba(0,0,0,0.8);
             overflow: hidden;
+            background: linear-gradient(to bottom, #4facfe, #00f2fe);
         }
 
-        canvas { display: block; }
+        canvas { display: block; width: 100%; height: 100%; }
 
         /* UI Styling */
         #ui-layer {
             position: absolute; top: 0; left: 0; width: 100%;
-            padding: 20px; box-sizing: border-box;
+            padding: 15px; box-sizing: border-box;
             display: flex; justify-content: space-between;
-            color: #333; z-index: 10; pointer-events: none;
-            font-size: 20px; font-weight: bold;
-            text-shadow: 1px 1px 0px #fff;
+            color: #111; z-index: 10; pointer-events: none;
+            font-size: 16px; font-weight: bold;
+            text-shadow: 2px 2px 0px #fff, -1px -1px 0px #fff, 1px -1px 0px #fff, -1px 1px 0px #fff;
         }
 
         .screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.9);
             display: flex; flex-direction: column;
             justify-content: center; align-items: center;
             color: #111; z-index: 20; text-align: center;
-            padding: 25px; box-sizing: border-box;
-            backdrop-filter: blur(4px);
+            padding: 20px; box-sizing: border-box;
+            backdrop-filter: blur(5px);
         }
 
         .hidden { display: none !important; }
 
         h1 { 
             font-family: 'Press Start 2P', monospace; 
-            color: #1a252f; font-size: 26px; 
-            text-shadow: 3px 3px 0px #7ac5f7; 
+            color: #2c3e50; font-size: 22px; 
+            text-shadow: 2px 2px 0px #3498db; 
             margin-bottom: 5px; line-height: 1.4;
         }
-        h2 { color: #d35400; margin-top: 0; font-size: 18px; }
+        h2 { color: #d35400; margin-top: 0; font-size: 16px; }
         
         .text-content {
             background: #fff;
-            border: 2px solid #ccc;
-            padding: 15px; border-radius: 10px;
-            font-size: 14px; line-height: 1.6;
-            text-align: left; margin-bottom: 20px;
-            max-height: 350px; overflow-y: auto;
+            border: 2px solid #bdc3c7;
+            padding: 15px; border-radius: 8px;
+            font-size: 13px; line-height: 1.5;
+            text-align: left; margin-bottom: 15px;
+            width: 100%; max-width: 400px;
+            max-height: 50vh; overflow-y: auto;
             box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
         }
-
+        
+        .text-content a { color: #2980b9; font-weight: bold; }
         .text-content ul { padding-left: 20px; margin: 10px 0; }
         .text-content li { margin-bottom: 8px; }
+
+        .btn-container { display: flex; flex-direction: column; gap: 10px; width: 80%; max-width: 300px; }
 
         button {
             font-family: 'Press Start 2P', monospace;
             background: #3498db; color: #fff;
             border: 3px solid #2980b9; border-radius: 5px;
-            padding: 15px 20px; font-size: 14px;
-            cursor: pointer; transition: all 0.1s; margin: 8px;
+            padding: 15px; font-size: 12px;
+            cursor: pointer; transition: all 0.1s;
             box-shadow: 4px 4px 0px #1a252f;
         }
-        button:hover { 
-            transform: translate(2px, 2px); 
-            box-shadow: 2px 2px 0px #1a252f;
-        }
-        .btn-orange { 
-            background: #e67e22; border-color: #d35400;
-        }
+        button:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #1a252f; }
+        .btn-orange { background: #e67e22; border-color: #d35400; }
+        .btn-green { background: #27ae60; border-color: #16a085; }
 
         #warning-flash {
             position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at bottom, rgba(255,0,0,0.4) 0%, transparent 60%);
+            background: radial-gradient(circle at bottom, rgba(231, 76, 60, 0.5) 0%, transparent 70%);
             z-index: 5; opacity: 0; transition: opacity 0.1s; pointer-events: none;
         }
         .warning-active { opacity: 1 !important; }
+
+        /* Mobile specific adjustments */
+        @media (max-width: 400px) {
+            h1 { font-size: 18px; }
+            .text-content { font-size: 11px; }
+        }
     </style>
 </head>
 <body>
@@ -99,44 +108,64 @@
         <div id="warning-flash"></div>
 
         <div id="ui-layer">
-            <div>CITATIONS: <span id="score">0</span></div>
+            <div>
+                LEVEL: <span id="level-ui" style="color:#2980b9;">PhD Student</span><br>
+                PUBS: <span id="pubs-ui">0</span>
+            </div>
             <div id="status-indicator" style="text-align: right;"></div>
         </div>
 
+        <!-- Start Screen -->
         <div id="start-screen" class="screen">
             <h1>TENURE RUN</h1>
             <h2>Publish or Perish!</h2>
-            
-            <div class="text-content" style="text-align: center;">
-                <strong>CONTROLS</strong><br><br>
-                <strong>[ ◀ ] [ ▶ ]</strong> or <strong>SWIPE</strong><br>Switch Lanes<br><br>
-                <strong>[ ▲ ]</strong> or <strong>SPACE</strong><br>Jump over APCs
+            <div class="btn-container">
+                <button onclick="startGame()">PUBLISH OR PERISH</button>
+                <button class="btn-orange" onclick="showScreen('tutorial-screen')">TUTORIAL</button>
+                <button class="btn-green" onclick="showScreen('about-screen')">ABOUT</button>
             </div>
-
-            <button onclick="startGame()">SUBMIT PAPER</button>
-            <button class="btn-orange" onclick="showAbout()">ABOUT GAME</button>
         </div>
 
-        <div id="about-screen" class="screen hidden">
-            <h1 style="font-size: 20px;">THE TREADMILL</h1>
+        <!-- Tutorial Screen -->
+        <div id="tutorial-screen" class="screen hidden">
+            <h1 style="font-size: 18px;">TUTORIAL</h1>
             <div class="text-content">
-                <p>Navigate the academic publishing landscape:</p>
+                <strong>CONTROLS:</strong> Swipe Left/Right to change lanes. Swipe Up to jump.<br><br>
+                <strong>THE TREADMILL:</strong>
                 <ul>
-                    <li>🧱 <strong>Tall Paywalls:</strong> Blocks access. Too high to jump!</li>
-                    <li><strong style="color:red;">$</strong> <strong>APCs (Fees):</strong> Low barrier. Jump over it to save grant money!</li>
-                    <li>🟦 <strong>Open Science:</strong> Blue Hexagon. Collect for citations!</li>
-                    <li>💎 <strong>Diamond OA:</strong> Grants a shield from one crash.</li>
-                    <li>🔓 <strong>Preprint Server:</strong> Orange Lock. Jetpack over peer-review delays!</li>
+                    <li>📄 <strong>Papers:</strong> Collect for +1 Publication.</li>
+                    <li>🟦 <strong>Open Data:</strong> Collect for +2 Publications.</li>
+                    <li>📜 <strong>Grants:</strong> Protects you from up to 3 APC fees!</li>
+                    <li>🟪 <strong>p-Hacking:</strong> The 'p' boosts speed drastically! Dangerous (no protection), but gets pubs fast.</li>
+                    <li>🧱 <strong>Paywalls:</strong> Too high to jump. Instant rejection!</li>
+                    <li><strong style="color:red;">$</strong> <strong>APCs:</strong> Jump over these fees, or use a Grant.</li>
                     <li>😡 <strong>Reviewer 2:</strong> Stumble, and they catch you!</li>
                 </ul>
             </div>
-            <button class="btn-orange" onclick="hideAbout()">BACK TO MENU</button>
+            <button class="btn-orange" onclick="showScreen('start-screen')">BACK</button>
         </div>
 
+        <!-- About Screen -->
+        <div id="about-screen" class="screen hidden">
+            <h1 style="font-size: 18px;">ABOUT</h1>
+            <div class="text-content">
+                <p>This game is a comical take on the <strong>"publish or perish"</strong> treadmill that early-career researchers must navigate to keep their jobs or get promoted.</p>
+                <p>It aims to raise awareness of systemic issues in academia (like paywalls, massive APC fees, and p-hacking out of desperation), while highlighting positive solutions.</p>
+                <p>Researchers worldwide are pushing for fairer evaluations by signing <strong><a href="https://sfdora.org/" target="_blank">SF DORA</a></strong> and joining <strong><a href="https://coara.eu/" target="_blank">CoARA</a></strong> (this game is not affiliated with them). Everyone can sign SF DORA to support assessing research on its own merits rather than journal metrics.</p>
+                <p>To join a large community concerned with Open Science and social justice, visit <strong><a href="https://forrt.org/" target="_blank">FORRT.org</a></strong>.</p>
+            </div>
+            <button class="btn-green" onclick="showScreen('start-screen')">BACK</button>
+        </div>
+
+        <!-- Game Over Screen -->
         <div id="game-over-screen" class="screen hidden">
-            <h1 style="color: #c0392b;">REJECTED!</h1>
-            <p>Reviewer 2 caught you, or you hit a Paywall.</p>
-            <h2 style="margin: 20px 0; color:#333; font-size:24px;">CITATIONS: <br><span id="final-score" style="color:#2980b9; font-size:40px;">0</span></h2>
+            <h1 style="color: #c0392b; font-size: 18px;">You did not get a permanent position.</h1>
+            <h2 style="margin: 10px 0; color:#333;">Total Publications: <span id="final-score" style="color:#2980b9;">0</span></h2>
+            <h2 style="margin: 5px 0; color:#27ae60; font-size:14px;">Final Rank: <span id="final-level"></span></h2>
+            
+            <div class="text-content" style="font-size: 11px;">
+                Research assessment is tough, often prioritizing quantity over quality, but the system is changing. Researchers worldwide are signing <strong>SF DORA</strong> and joining <strong>CoARA</strong> to push for fairer evaluations—and you can sign SF DORA too!
+            </div>
             <button onclick="startGame()">NEW SUBMISSION</button>
         </div>
     </div>
@@ -144,109 +173,76 @@
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        const scoreEl = document.getElementById('score');
+        const pubsEl = document.getElementById('pubs-ui');
+        const levelEl = document.getElementById('level-ui');
         const statusIndicator = document.getElementById('status-indicator');
         const warningFlash = document.getElementById('warning-flash');
 
-        // --- CUSTOM RETRO MUSIC ENGINE ---
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        // --- AUDIO ENGINE ---
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         let bgmTimer;
         let nextNoteTime = 0;
         let bgmStep = 0;
 
-        // MIDI Note Values (C4 = 60)
-        // Melody: Syncopated Mario-style tune
-        const melody = [
-            72,0,76,0,79,0,0,72,  84,0,79,0,76,0,0,0, // C E G (C) C6 G E
-            74,0,77,0,81,0,0,74,  83,0,81,0,79,0,0,0, // D F A (D) B A G
-            72,0,76,0,79,0,0,72,  84,0,79,0,76,0,0,0, // C E G (C) C6 G E
-            77,0,81,0,84,0,0,77,  83,0,79,0,72,0,0,0, // F A C (F) B G C
-            
-            81,0,0,81,84,0,81,0,  79,0,0,79,76,0,72,0, // Part B: F Major -> C Major
-            74,0,0,74,77,0,81,0,  79,0,77,0,76,0,79,0, // D Minor -> G Major
-            81,0,0,81,84,0,81,0,  79,0,0,79,76,0,72,0, // F Major -> C Major
-            74,0,76,0,77,0,78,0,  79,0,0,0, 0,0,0,0    // Walk up -> G Major hold
-        ];
-        
-        // Bassline: Thumpy alternating root/fifth
-        const bass = [
-            48,0,0,48,43,0,0,43,  48,0,0,48,43,0,0,43, // C G
-            50,0,0,50,43,0,0,43,  50,0,0,50,43,0,0,43, // D G
-            48,0,0,48,43,0,0,43,  48,0,0,48,43,0,0,43, // C G
-            53,0,0,53,48,0,0,48,  55,0,0,55,43,0,0,43, // F C G G
-            
-            53,0,0,53,48,0,0,48,  48,0,0,48,43,0,0,43, // F C C G
-            50,0,0,50,45,0,0,45,  43,0,0,43,38,0,0,38, // D A G D
-            53,0,0,53,48,0,0,48,  48,0,0,48,43,0,0,43, // F C C G
-            50,0,0,50,52,0,0,52,  55,0,0,0, 0,0,0,0    // D E G
-        ];
-
-        function getFreq(note) {
-            return 440 * Math.pow(2, (note - 69) / 12);
-        }
+        function getFreq(note) { return 440 * Math.pow(2, (note - 69) / 12); }
 
         function scheduleBGM() {
             if (!isPlaying) return;
             let currentTime = audioCtx.currentTime;
             
             while (nextNoteTime < currentTime + 0.1) {
-                // Play Step
-                let mNote = melody[bgmStep];
-                let bNote = bass[bgmStep];
+                let mNote = 0, bNote = 0;
+                
+                // Normal vs P-Hacking Mode Music
+                if (player.phackTimer > 0) {
+                    // Frantic chromatic run
+                    const phackMelody = [72, 73, 74, 75, 76, 75, 74, 73];
+                    const phackBass = [48, 0, 49, 0, 50, 0, 51, 0];
+                    mNote = phackMelody[bgmStep % 8];
+                    bNote = phackBass[bgmStep % 8];
+                } else {
+                    // Standard bouncy tune
+                    const melody = [72,0,76,0,79,0,0,72, 84,0,79,0,76,0,0,0];
+                    const bass = [48,0,0,48,43,0,0,43, 48,0,0,48,43,0,0,43];
+                    mNote = melody[bgmStep % 16];
+                    bNote = bass[bgmStep % 16];
+                }
 
                 if (mNote > 0) {
-                    let gain = audioCtx.createGain();
-                    gain.connect(audioCtx.destination);
-                    
-                    // Main Melody (Square)
-                    let osc = audioCtx.createOscillator();
-                    osc.type = 'square';
-                    osc.frequency.setValueAtTime(getFreq(mNote), nextNoteTime);
-                    osc.connect(gain);
-                    
-                    // Sub Melody for fat SNES sound (Sawtooth, octave down)
-                    let subOsc = audioCtx.createOscillator();
-                    subOsc.type = 'sawtooth';
-                    subOsc.frequency.setValueAtTime(getFreq(mNote - 12), nextNoteTime);
-                    subOsc.connect(gain);
-                    
-                    gain.gain.setValueAtTime(0.04, nextNoteTime); // Mix volume
-                    gain.gain.exponentialRampToValueAtTime(0.001, nextNoteTime + 0.15);
-                    
+                    let gain = audioCtx.createGain(); gain.connect(audioCtx.destination);
+                    let osc = audioCtx.createOscillator(); osc.type = (player.phackTimer > 0) ? 'sawtooth' : 'square';
+                    osc.frequency.setValueAtTime(getFreq(mNote), nextNoteTime); osc.connect(gain);
+                    gain.gain.setValueAtTime(0.05, nextNoteTime); gain.gain.exponentialRampToValueAtTime(0.001, nextNoteTime + 0.15);
                     osc.start(nextNoteTime); osc.stop(nextNoteTime + 0.15);
-                    subOsc.start(nextNoteTime); subOsc.stop(nextNoteTime + 0.15);
                 }
 
                 if (bNote > 0) {
-                    let gain = audioCtx.createGain();
-                    let osc = audioCtx.createOscillator();
-                    osc.type = 'triangle'; // Thumpy Bass
-                    osc.frequency.setValueAtTime(getFreq(bNote), nextNoteTime);
-                    osc.connect(gain); gain.connect(audioCtx.destination);
-                    
-                    gain.gain.setValueAtTime(0.2, nextNoteTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, nextNoteTime + 0.2);
+                    let gain = audioCtx.createGain(); gain.connect(audioCtx.destination);
+                    let osc = audioCtx.createOscillator(); osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(getFreq(bNote), nextNoteTime); osc.connect(gain);
+                    gain.gain.setValueAtTime(0.2, nextNoteTime); gain.gain.exponentialRampToValueAtTime(0.01, nextNoteTime + 0.2);
                     osc.start(nextNoteTime); osc.stop(nextNoteTime + 0.2);
                 }
                 
-                // Dynamic tempo: As game speeds up, music gets faster!
-                // gameSpeed goes from 6 to ~12. BPM goes from ~130 to ~190
-                let currentBPM = 70 + (gameSpeed * 10); 
-                let stepDuration = 60 / (currentBPM * 2); // 1 step = 1/8th note
+                let currentSpeed = gameSpeed * (player.phackTimer > 0 ? 1.5 : 1);
+                let currentBPM = 80 + (currentSpeed * 10); 
+                let stepDuration = 60 / (currentBPM * 2);
                 
                 nextNoteTime += stepDuration;
-                bgmStep = (bgmStep + 1) % melody.length;
+                bgmStep++;
             }
             bgmTimer = setTimeout(scheduleBGM, 50);
         }
 
-        // Sound Effects
         function playSound(type) {
             if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination); const now = audioCtx.currentTime;
             
             if (type === 'coin') {
                 osc.type = 'sine'; osc.frequency.setValueAtTime(1000, now); osc.frequency.exponentialRampToValueAtTime(1500, now + 0.1);
@@ -256,27 +252,60 @@
                 osc.type = 'triangle'; osc.frequency.setValueAtTime(300, now); osc.frequency.exponentialRampToValueAtTime(600, now + 0.2);
                 gain.gain.setValueAtTime(0.3, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
                 osc.start(now); osc.stop(now + 0.2);
-            } else if (type === 'powerup') {
-                osc.type = 'square'; osc.frequency.setValueAtTime(400, now); osc.frequency.setValueAtTime(600, now + 0.1); osc.frequency.setValueAtTime(800, now + 0.2);
-                gain.gain.setValueAtTime(0.15, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
-                osc.start(now); osc.stop(now + 0.4);
             } else if (type === 'crash') {
                 osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now); osc.frequency.exponentialRampToValueAtTime(40, now + 0.3);
                 gain.gain.setValueAtTime(0.4, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
                 osc.start(now); osc.stop(now + 0.3);
+            } else if (type === 'grant') {
+                osc.type = 'square'; osc.frequency.setValueAtTime(600, now); osc.frequency.setValueAtTime(800, now + 0.1);
+                gain.gain.setValueAtTime(0.15, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now); osc.stop(now + 0.3);
+            } else if (type === 'levelup') {
+                osc.type = 'square';
+                [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => { // C5, E5, G5, C6
+                    osc.frequency.setValueAtTime(freq, now + i*0.1);
+                });
+                gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0, now + 0.5);
+                osc.start(now); osc.stop(now + 0.5);
             }
         }
 
-        // --- GRAPHICS: PIXEL ART & DRAWING ---
-        const colors = {'W':'#ffffff', 'B':'#000000', 'C':'#ffc0cb', 'b':'#2980b9'};
-        const playerSprite = [
-            "  BBBB  ", " BCCCCB ", " BCBWCB ", " WWWWWW ", " BWWWWb ", "  WWWW  ", "  B  B  ", "  B  B  "
+        // --- LEVELING SYSTEM & SPRITES ---
+        const levels = [
+            { name: "PhD Student", req: 0, 
+              sprite: ["  BBBB  ", " BCCCCB ", " BCBWCB ", " WWWWWW ", " BWWWWb ", "  WWWW  ", "  B  B  ", "  B  B  "] },
+            { name: "Postdoc", req: 3, 
+              sprite: ["  BBBB  ", " BCCCCB ", " BCCCgB ", " gggggg ", " BggWgb ", "  gggg  ", "  B  B  ", "  B  B  "] }, // Grey coat, tired
+            { name: "Lecturer", req: 9, 
+              sprite: ["  BBBB  ", " BCCCCB ", " BCBWCB ", " BBBBBB ", " WBBBBW ", "  BBBB  ", "  B  B  ", "  B  B  "] }, // Suit
+            { name: "Asst. Prof", req: 21, 
+              sprite: ["  BBBB  ", " BCCCCB ", " BCBWCB ", " BBBBBB ", " WBBBBW ", "  BBBB  ", "  W  W  ", "  B  B  ", "  B  B  "] }, // Taller
+            { name: "Tenured Prof", req: 45, 
+              sprite: ["  YYYY  ", "  BBBB  ", " BCCCCB ", " BCBWCB ", " YYYYYY ", " YYYYYY ", "  YYYY  ", "  Y  Y  ", "  B  B  "] }  // Crown/Robes
         ];
-        
+
+        let pubs = 0;
+        let currentLevel = 0;
+        const colors = {'W':'#ffffff', 'B':'#000000', 'C':'#ffc0cb', 'b':'#2980b9', 'g':'#95a5a6', 'Y':'#f1c40f'};
+
+        function addPubs(amount) {
+            pubs += amount;
+            pubsEl.innerText = pubs;
+            
+            // Check Level Up
+            if (currentLevel < levels.length - 1 && pubs >= levels[currentLevel + 1].req) {
+                currentLevel++;
+                levelEl.innerText = levels[currentLevel].name;
+                playSound('levelup');
+                spawnParticles(player.x, player.renderY - 30, '#f1c40f', 30, "LEVEL UP!");
+            }
+        }
+
+        // --- GRAPHICS DRAWING ---
         function drawPixelSprite(ctx, sprite, x, y, scale) {
             const size = scale;
             const w = sprite[0].length * size; const h = sprite.length * size;
-            const startX = x - w/2; const startY = y - h/2;
+            const startX = x - w/2; const startY = y - h + (size*2); // align feet
             for(let r=0; r<sprite.length; r++) {
                 for(let c=0; c<sprite[r].length; c++) {
                     const char = sprite[r][c];
@@ -288,94 +317,66 @@
             }
         }
 
-        function drawHexBadge(ctx, x, y, size) {
-            ctx.fillStyle = "#2980b9";
-            ctx.beginPath();
-            for (let i = 0; i < 6; i++) {
-                let angle = (Math.PI / 3) * i + (Math.PI / 6);
-                ctx.lineTo(x + size * Math.cos(angle), y + size * Math.sin(angle));
-            }
-            ctx.closePath(); ctx.fill();
-            ctx.fillStyle = "#fff";
-            ctx.fillRect(x - 6, y + 2, 3, -8); ctx.fillRect(x - 1, y + 2, 3, -12); ctx.fillRect(x + 4, y + 2, 3, -6);
-        }
-
-        function drawLockBadge(ctx, x, y, size) {
-            ctx.fillStyle = "#e67e22";
-            ctx.fillRect(x - size/2, y, size, size*0.8);
-            ctx.strokeStyle = "#e67e22"; ctx.lineWidth = 3;
-            ctx.beginPath(); ctx.arc(x, y, size*0.4, Math.PI, Math.PI*1.8); ctx.stroke();
-            ctx.fillStyle = "#fff";
-            ctx.beginPath(); ctx.arc(x, y + size*0.3, 3, 0, Math.PI*2); ctx.fill();
-            ctx.fillRect(x-1.5, y+size*0.3, 3, 6);
-        }
-
         // --- GAME ENGINE ---
-        const PAPER_WIDTH = 300;
+        const PAPER_WIDTH = 340;
         const PAPER_X = (450 - PAPER_WIDTH) / 2;
-        const LANES = [125, 225, 325];
+        const LANES = [100, 225, 350];
         const GROUND_Y = 550;
         
-        let isPlaying = false, score = 0, gameSpeed = 6, frameCount = 0, animationId;
-        let player = { lane: 1, x: 225, y: GROUND_Y, isJumping: false, jumpProgress: 0, hasShield: false, jetpackTimer: 0 };
+        let isPlaying = false, gameSpeed = 5, frameCount = 0, animationId;
+        let player = { lane: 1, x: 225, renderY: GROUND_Y, isJumping: false, jumpProgress: 0, grantCharges: 0, phackTimer: 0 };
         let reviewerDist = 100;
-        let entities = [], particles = [], textLines = [];
+        let entities = [], particles = [], textLines = [], pageBreaks = [];
         
-        let clouds = Array.from({length: 5}, () => ({
-            x: Math.random() * 450, y: Math.random() * 700, 
-            speed: Math.random() * 0.3 + 0.1, size: Math.random() * 30 + 30
-        }));
-
-        const academicWords = ["Abstract", "Methodology", "Results", "p < 0.05", "N = 342", "Null Hypothesis", "Discussion", "Conclusion", "Data Set", "Double Blind", "Variables", "Significance"];
+        const academicWords = ["Abstract", "Methodology", "Results", "p < 0.05", "N = 342", "Analysis", "Discussion", "Conclusion", "Data Set", "Variables", "Significance", "Reviewer"];
 
         // Input
-        document.addEventListener('keydown', (e) => {
+        function handleMove(dir) {
             if (!isPlaying) return;
-            if (e.key === 'ArrowLeft' || e.key === 'a') if (player.lane > 0) player.lane--;
-            if (e.key === 'ArrowRight' || e.key === 'd') if (player.lane < 2) player.lane++;
-            if ((e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') && !player.isJumping && player.jetpackTimer <= 0) {
+            if (dir === 'left' && player.lane > 0) player.lane--;
+            if (dir === 'right' && player.lane < 2) player.lane++;
+            if (dir === 'up' && !player.isJumping) {
                 player.isJumping = true; player.jumpProgress = 0; playSound('jump');
             }
+        }
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a') handleMove('left');
+            if (e.key === 'ArrowRight' || e.key === 'd') handleMove('right');
+            if (e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') handleMove('up');
         });
 
         let touchX = 0, touchY = 0;
-        canvas.addEventListener('touchstart', e => { touchX = e.touches[0].screenX; touchY = e.touches[0].screenY; });
+        canvas.addEventListener('touchstart', e => { e.preventDefault(); touchX = e.touches[0].screenX; touchY = e.touches[0].screenY; }, {passive: false});
         canvas.addEventListener('touchend', e => {
+            e.preventDefault();
             if (!isPlaying) return;
-            let dx = e.changedTouches[0].screenX - touchX;
-            let dy = e.changedTouches[0].screenY - touchY;
+            let dx = e.changedTouches[0].screenX - touchX; let dy = e.changedTouches[0].screenY - touchY;
             if (Math.abs(dx) > Math.abs(dy)) {
-                if (dx > 30 && player.lane < 2) player.lane++;
-                else if (dx < -30 && player.lane > 0) player.lane--;
+                if (dx > 30) handleMove('right'); else if (dx < -30) handleMove('left');
             } else {
-                if (dy < -30 && !player.isJumping && player.jetpackTimer <= 0) {
-                    player.isJumping = true; player.jumpProgress = 0; playSound('jump');
-                }
+                if (dy < -30) handleMove('up');
             }
-        });
-
-        function showAbout() { document.getElementById('start-screen').classList.add('hidden'); document.getElementById('about-screen').classList.remove('hidden'); }
-        function hideAbout() { document.getElementById('about-screen').classList.add('hidden'); document.getElementById('start-screen').classList.remove('hidden'); }
+        }, {passive: false});
 
         function startGame() {
-            isPlaying = true; score = 0; gameSpeed = 6; frameCount = 0; 
-            entities = []; particles = []; textLines = [];
+            isPlaying = true; pubs = 0; currentLevel = 0; gameSpeed = 5; frameCount = 0; 
+            entities = []; particles = []; textLines = []; pageBreaks = [];
+            
+            pubsEl.innerText = pubs; levelEl.innerText = levels[0].name;
             
             for(let y=0; y<700; y+=40) spawnTextLine(y);
+            pageBreaks.push({y: 350, page: 1});
 
-            player = { lane: 1, x: 225, y: GROUND_Y, isJumping: false, jumpProgress: 0, hasShield: false, jetpackTimer: 0 };
+            player = { lane: 1, x: 225, renderY: GROUND_Y, isJumping: false, jumpProgress: 0, grantCharges: 0, phackTimer: 0 };
             reviewerDist = 100;
-            scoreEl.innerText = score; statusIndicator.innerText = "";
+            statusIndicator.innerText = "";
             warningFlash.classList.remove('warning-active');
             
-            document.getElementById('start-screen').classList.add('hidden');
-            document.getElementById('game-over-screen').classList.add('hidden');
+            showScreen(''); // Hide all screens
             
-            // Start Music
             if (audioCtx.state === 'suspended') audioCtx.resume();
-            clearTimeout(bgmTimer);
-            bgmStep = 0;
-            nextNoteTime = audioCtx.currentTime + 0.1;
+            clearTimeout(bgmTimer); bgmStep = 0; nextNoteTime = audioCtx.currentTime + 0.1;
             scheduleBGM();
 
             animationId = requestAnimationFrame(gameLoop);
@@ -387,15 +388,23 @@
             textLines.push({ y: yStart, text: str });
         }
 
+        let pageNum = 2;
         function spawnEntity() {
             const lane = Math.floor(Math.random() * 3);
             const rand = Math.random();
             let type = '';
-            if (rand < 0.5) type = 'os_badge';
-            else if (rand < 0.75) type = 'paywall';
-            else if (rand < 0.95) type = 'apc';
-            else if (rand < 0.98) type = 'diamond';
-            else type = 'oa_lock';
+            
+            // Item Probabilities
+            if (rand < 0.30) type = 'paper';
+            else if (rand < 0.45) type = 'os_badge';
+            else if (rand < 0.70) type = 'paywall';
+            else if (rand < 0.90) type = 'apc';
+            else if (rand < 0.95) type = 'grant';
+            else type = 'phack';
+
+            // Prevent unavoidable walls
+            let inRow = entities.filter(e => e.y < 100 && e.type === 'paywall');
+            if (type === 'paywall' && inRow.length >= 2) type = 'apc'; // Downgrade if blocking
 
             if (!entities.some(e => e.lane === lane && e.y < 150)) {
                 entities.push({ type: type, lane: lane, x: LANES[lane], y: -50, marked: false });
@@ -418,80 +427,98 @@
         function gameLoop() {
             if (!isPlaying) return;
             frameCount++;
-            if (frameCount % 600 === 0) gameSpeed += 0.4;
+            if (frameCount % 600 === 0) gameSpeed += 0.3; // Gradual speedup
             
-            if (frameCount % Math.floor(40/gameSpeed) === 0) spawnTextLine(-20);
-            if (frameCount % Math.max(20, Math.floor(70 - gameSpeed*1.5)) === 0) spawnEntity();
+            let speedMult = (player.phackTimer > 0) ? 1.5 : 1;
+            let activeSpeed = gameSpeed * speedMult;
 
-            update(); draw();
+            // Passive Publications
+            if (frameCount % (60 * 4) === 0) addPubs(1); // 1 pub every 4 seconds
+
+            if (frameCount % Math.floor(40/activeSpeed) === 0) spawnTextLine(-20);
+            
+            // Page breaks
+            if (frameCount % Math.floor(400/activeSpeed) === 0) {
+                pageBreaks.push({y: -50, page: pageNum++});
+            }
+
+            // Spawn rate scales with speed to keep density high
+            if (frameCount % Math.max(15, Math.floor(60 - activeSpeed*2)) === 0) spawnEntity();
+
+            update(activeSpeed, speedMult); 
+            draw();
             animationId = requestAnimationFrame(gameLoop);
         }
 
-        function update() {
-            player.x += (LANES[player.lane] - player.x) * 0.2; // Lerp Lane movement
+        function update(activeSpeed, speedMult) {
+            player.x += (LANES[player.lane] - player.x) * 0.25;
 
+            // P-Hacking Timer
+            if (player.phackTimer > 0) player.phackTimer--;
+
+            // Jump Physics
             let jumpOffset = 0;
-            if (player.jetpackTimer > 0) {
-                player.jetpackTimer--; 
-                jumpOffset = 180; // Fly High
-                player.isJumping = false; player.jumpProgress = 0;
-                
-                statusIndicator.innerHTML = `🚀 <span style="color:#d35400;">PREPRINT (${Math.ceil(player.jetpackTimer/60)}s)</span>`;
-                spawnParticles(player.x, player.renderY + 20, (frameCount%2===0)?'#e67e22':'#f1c40f', 2);
-            } else if (player.isJumping) {
-                player.jumpProgress += 0.08;
+            if (player.isJumping) {
+                player.jumpProgress += 0.08 * speedMult; // Jump faster if running faster
                 jumpOffset = Math.sin(player.jumpProgress) * 120;
                 if (player.jumpProgress >= Math.PI) { player.isJumping = false; jumpOffset = 0; }
-                if (player.hasShield) statusIndicator.innerHTML = `💎 <span style="color:#2980b9;">DIAMOND OA</span>`;
-                else statusIndicator.innerHTML = "";
-            } else {
-                if (player.hasShield) statusIndicator.innerHTML = `💎 <span style="color:#2980b9;">DIAMOND OA</span>`;
-                else statusIndicator.innerHTML = "";
             }
-
             player.renderY = GROUND_Y - jumpOffset;
-            let activeSpeed = (player.jetpackTimer > 0) ? gameSpeed * 2.5 : gameSpeed;
 
-            clouds.forEach(c => { c.y += c.speed; if (c.y > 800) { c.y = -100; c.x = Math.random() * 450; } });
+            // Update HUD status
+            let statusHtml = "";
+            if (player.grantCharges > 0) statusHtml += `📜 GRANTS: ${player.grantCharges}x `;
+            if (player.phackTimer > 0) statusHtml += `<br><span style="color:#8e44ad;">P-HACKING (${Math.ceil(player.phackTimer/60)}s)</span>`;
+            statusIndicator.innerHTML = statusHtml;
 
+            // Move Environment
             textLines.forEach(t => t.y += activeSpeed); textLines = textLines.filter(t => t.y < 800);
+            pageBreaks.forEach(p => p.y += activeSpeed); pageBreaks = pageBreaks.filter(p => p.y < 800);
 
+            // Reviewer Recovery
             if (reviewerDist < 100) {
                 reviewerDist += 0.15;
                 if (reviewerDist > 60) warningFlash.classList.remove('warning-active');
             }
 
+            // Move Entities
             entities.forEach(e => {
                 e.y += activeSpeed;
 
                 if (e.lane === player.lane && Math.abs(e.y - GROUND_Y) < 40 && !e.marked) {
                     let isHighUp = (GROUND_Y - player.renderY) > 50;
 
-                    if (e.type === 'os_badge') {
-                        score += 10; scoreEl.innerText = score; playSound('coin'); e.marked = true;
-                        spawnParticles(e.x, e.y, '#2980b9', 15); spawnParticles(e.x, e.y - 20, '#2980b9', 1, "+10");
+                    if (e.type === 'paper') {
+                        addPubs(1); playSound('coin'); e.marked = true;
+                        spawnParticles(e.x, e.y, '#bdc3c7', 10); spawnParticles(e.x, e.y - 20, '#2c3e50', 1, "+1 Pub");
+                    }
+                    else if (e.type === 'os_badge') {
+                        addPubs(2); playSound('coin'); e.marked = true;
+                        spawnParticles(e.x, e.y, '#2980b9', 15); spawnParticles(e.x, e.y - 20, '#2980b9', 1, "+2 Pubs");
                     } 
-                    else if (e.type === 'diamond') {
-                        player.hasShield = true; playSound('powerup'); e.marked = true;
-                        spawnParticles(e.x, e.y, '#3498db', 20);
+                    else if (e.type === 'grant') {
+                        player.grantCharges = 3; playSound('grant'); e.marked = true;
+                        spawnParticles(e.x, e.y, '#27ae60', 20);
                     }
-                    else if (e.type === 'oa_lock') {
-                        player.jetpackTimer = 300; playSound('powerup'); e.marked = true;
-                        spawnParticles(e.x, e.y, '#e67e22', 30);
+                    else if (e.type === 'phack') {
+                        player.phackTimer = 300; playSound('powerup'); e.marked = true;
+                        spawnParticles(e.x, e.y, '#8e44ad', 30);
                     }
-                    else if (e.type === 'paywall' || e.type === 'apc') {
-                        if (player.jetpackTimer > 0) {
-                            score += 5; scoreEl.innerText = score; e.marked = true; 
-                            spawnParticles(e.x, e.y, '#c0392b', 20); return; 
-                        }
-                        if (e.type === 'apc' && isHighUp) return; 
+                    else if (e.type === 'paywall') {
+                        playSound('crash'); e.marked = true;
+                        spawnParticles(e.x, e.y, '#c0392b', 30);
+                        gameOver(); // Grants do NOT stop paywalls
+                    }
+                    else if (e.type === 'apc') {
+                        if (e.type === 'apc' && isHighUp) return; // Jumped over safely
 
                         playSound('crash'); e.marked = true;
                         spawnParticles(e.x, e.y, '#c0392b', 30);
 
-                        if (player.hasShield) { player.hasShield = false; stumble(); } 
-                        else {
-                            if (e.type === 'paywall' || reviewerDist < 50) gameOver();
+                        if (player.grantCharges > 0) { 
+                            player.grantCharges--; // Grant pays the fee
+                        } else {
+                            if (reviewerDist < 50) gameOver();
                             else stumble();
                         }
                     }
@@ -501,6 +528,7 @@
 
             entities = entities.filter(e => !e.marked);
 
+            // Update Particles
             particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.life -= 0.02; });
             particles = particles.filter(p => p.life > 0);
         }
@@ -515,94 +543,118 @@
         function gameOver() {
             isPlaying = false; cancelAnimationFrame(animationId);
             clearTimeout(bgmTimer); 
-            document.getElementById('final-score').innerText = score;
-            document.getElementById('game-over-screen').classList.remove('hidden');
+            document.getElementById('final-score').innerText = pubs;
+            document.getElementById('final-level').innerText = levels[currentLevel].name;
+            showScreen('game-over-screen');
         }
 
         // --- RENDER ENGINE ---
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-            clouds.forEach(c => {
-                ctx.beginPath();
-                ctx.arc(c.x, c.y, c.size, 0, Math.PI*2);
-                ctx.arc(c.x + c.size*0.8, c.y - c.size*0.3, c.size*0.8, 0, Math.PI*2);
-                ctx.arc(c.x - c.size*0.8, c.y - c.size*0.3, c.size*0.8, 0, Math.PI*2);
-                ctx.fill();
-            });
-
-            ctx.fillStyle = '#fdfdfd';
-            ctx.shadowBlur = 15; ctx.shadowColor = "rgba(0,0,0,0.3)";
+            // Draw Giant Manuscript Paper
+            ctx.fillStyle = '#f9f9f9';
+            ctx.shadowBlur = 20; ctx.shadowColor = "rgba(0,0,0,0.5)";
             ctx.fillRect(PAPER_X, 0, PAPER_WIDTH, 700);
             ctx.shadowBlur = 0;
 
-            ctx.strokeStyle = '#d6eaf8'; ctx.lineWidth = 2;
-            [125, 225, 325].forEach(x => {
-                ctx.beginPath(); ctx.moveTo(x - 40, 0); ctx.lineTo(x - 40, 700); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(x + 40, 0); ctx.lineTo(x + 40, 700); ctx.stroke();
+            // Page Breaks & Numbers
+            pageBreaks.forEach(p => {
+                ctx.fillStyle = '#ddd'; ctx.fillRect(PAPER_X, p.y, PAPER_WIDTH, 4);
+                ctx.fillStyle = '#aaa'; ctx.font = "12px Arial"; ctx.textAlign = "center";
+                ctx.fillText("- " + p.page + " -", PAPER_X + PAPER_WIDTH/2, p.y + 20);
             });
 
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.08)'; 
-            ctx.font = "14px 'Times New Roman', serif"; ctx.textAlign = "left";
+            // Manuscript Lines (Lanes)
+            ctx.strokeStyle = 'rgba(0,0,0,0.05)'; ctx.lineWidth = 2;
+            [162.5, 287.5].forEach(x => {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 700); ctx.stroke();
+            });
+
+            // Faint Text
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.06)'; 
+            ctx.font = "16px 'Times New Roman', serif"; ctx.textAlign = "left";
             textLines.forEach(t => { ctx.fillText(t.text, PAPER_X + 15, t.y); });
 
+            // Sort Entities
             entities.sort((a,b) => a.y - b.y);
-
             ctx.textAlign = "center"; ctx.textBaseline = "middle";
+
             entities.forEach(e => {
+                // Drop shadow
                 ctx.fillStyle = "rgba(0,0,0,0.2)";
                 ctx.beginPath(); ctx.ellipse(e.x, e.y + 15, 25, 6, 0, 0, Math.PI*2); ctx.fill();
 
-                if (e.type === 'os_badge') drawHexBadge(ctx, e.x, e.y, 16);
-                else if (e.type === 'oa_lock') drawLockBadge(ctx, e.x, e.y, 18);
+                if (e.type === 'os_badge') {
+                    // Blue Hexagon
+                    ctx.fillStyle = "#2980b9"; ctx.beginPath();
+                    for (let i=0; i<6; i++) { let angle = (Math.PI/3)*i + (Math.PI/6); ctx.lineTo(e.x + 16*Math.cos(angle), e.y + 16*Math.sin(angle)); }
+                    ctx.closePath(); ctx.fill();
+                    ctx.fillStyle = "#fff"; ctx.fillRect(e.x-6, e.y+2, 3, -8); ctx.fillRect(e.x-1, e.y+2, 3, -12); ctx.fillRect(e.x+4, e.y+2, 3, -6);
+                }
+                else if (e.type === 'paper') {
+                    ctx.fillStyle = '#fff'; ctx.strokeStyle = '#333'; ctx.lineWidth = 2;
+                    ctx.fillRect(e.x-12, e.y-16, 24, 32); ctx.strokeRect(e.x-12, e.y-16, 24, 32);
+                    ctx.fillStyle = '#333'; ctx.fillRect(e.x-8, e.y-8, 16, 2); ctx.fillRect(e.x-8, e.y-2, 16, 2); ctx.fillRect(e.x-8, e.y+4, 10, 2);
+                }
+                else if (e.type === 'grant') {
+                    // Scroll/Money
+                    ctx.fillStyle = '#f1c40f'; ctx.fillRect(e.x-15, e.y-10, 30, 20); // paper
+                    ctx.fillStyle = '#27ae60'; ctx.fillRect(e.x-5, e.y-12, 10, 24);  // ribbon
+                }
+                else if (e.type === 'phack') {
+                    ctx.fillStyle = '#8e44ad'; ctx.font = "bold 40px 'Times New Roman'";
+                    ctx.fillText("p", e.x, e.y);
+                }
                 else if (e.type === 'paywall') {
-                    ctx.fillStyle = '#8e44ad'; ctx.fillRect(e.x - 35, e.y - 80, 70, 100);
-                    ctx.strokeStyle = '#2c3e50'; ctx.lineWidth = 2;
-                    for(let i=0; i<5; i++) {
-                        ctx.beginPath(); ctx.moveTo(e.x-35, e.y-80 + i*20); ctx.lineTo(e.x+35, e.y-80 + i*20); ctx.stroke();
-                    }
-                    ctx.fillStyle = '#fff'; ctx.font = "bold 16px Arial";
+                    ctx.fillStyle = '#2c3e50'; ctx.fillRect(e.x - 40, e.y - 80, 80, 100);
+                    ctx.strokeStyle = '#1a252f'; ctx.lineWidth = 2;
+                    for(let i=0; i<5; i++) { ctx.beginPath(); ctx.moveTo(e.x-40, e.y-80 + i*20); ctx.lineTo(e.x+40, e.y-80 + i*20); ctx.stroke(); }
+                    ctx.fillStyle = '#e74c3c'; ctx.font = "bold 14px Arial";
                     ctx.fillText("PAY", e.x, e.y - 45); ctx.fillText("WALL", e.x, e.y - 25);
                 }
                 else if (e.type === 'apc') {
-                    ctx.fillStyle = '#c0392b'; ctx.font = "bold 44px Arial";
-                    ctx.fillText("$", e.x, e.y + 5);
-                }
-                else if (e.type === 'diamond') {
-                    ctx.font = "35px Arial"; ctx.fillText("💎", e.x, e.y);
+                    ctx.fillStyle = '#c0392b'; ctx.font = "bold 44px Arial"; ctx.fillText("$", e.x, e.y + 5);
                 }
             });
 
+            // Player Shadow
             let shadowScale = Math.max(0.2, 1 - ((GROUND_Y - player.renderY) / 200));
             ctx.fillStyle = "rgba(0,0,0,0.3)";
             ctx.beginPath(); ctx.ellipse(player.x, GROUND_Y + 20, 25 * shadowScale, 6 * shadowScale, 0, 0, Math.PI*2); ctx.fill();
 
-            if (player.hasShield) {
-                ctx.beginPath(); ctx.arc(player.x, player.renderY, 35, 0, Math.PI*2);
-                ctx.fillStyle = "rgba(41, 128, 185, 0.3)"; ctx.fill();
-                ctx.strokeStyle = "#2980b9"; ctx.lineWidth = 3; ctx.stroke();
+            // P-Hack Aura (Purple glow)
+            if (player.phackTimer > 0) {
+                ctx.beginPath(); ctx.arc(player.x, player.renderY - 15, 35, 0, Math.PI*2);
+                ctx.fillStyle = "rgba(142, 68, 173, 0.4)"; ctx.fill();
             }
 
-            drawPixelSprite(ctx, playerSprite, player.x, player.renderY, 5);
+            // Draw Player Sprite (based on level)
+            drawPixelSprite(ctx, levels[currentLevel].sprite, player.x, player.renderY, 5);
 
+            // Reviewer 2
             if (reviewerDist < 100) {
                 let revY = 750 - (100 - reviewerDist) * 3;
                 ctx.font = "80px Arial"; ctx.fillText("😡", player.x, revY);
-                ctx.fillStyle = "#c0392b"; ctx.font = "bold 16px Roboto Mono";
-                ctx.fillText("REVIEWER 2", player.x, revY + 50);
+                ctx.fillStyle = "#c0392b"; ctx.font = "bold 16px Roboto Mono"; ctx.fillText("REVIEWER 2", player.x, revY + 50);
             }
 
+            // Particles
             particles.forEach(p => {
                 ctx.globalAlpha = p.life / p.maxLife;
                 if (p.type === 'text') {
-                    ctx.fillStyle = p.color; ctx.font = "bold 20px Roboto Mono"; ctx.fillText(p.text, p.x, p.y);
+                    ctx.fillStyle = p.color; ctx.font = "bold 18px Roboto Mono"; ctx.fillText(p.text, p.x, p.y);
                 } else {
                     ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, p.size, p.size);
                 }
                 ctx.globalAlpha = 1;
             });
         }
+
+        // Handle resizing for mobile
+        window.addEventListener('resize', () => {
+            // Keep internal logic 450x700, CSS handles the scaling
+        });
     </script>
 </body>
 </html>

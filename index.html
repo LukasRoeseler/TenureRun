@@ -60,16 +60,16 @@
         .text-content {
             background: #fff; border: 2px solid #bdc3c7;
             padding: 15px; border-radius: 8px;
-            font-size: 13px; line-height: 1.5;
+            font-size: 12px; line-height: 1.5;
             text-align: left; margin-bottom: 15px;
             width: 100%; max-width: 400px;
-            max-height: 50vh; overflow-y: auto;
+            max-height: 55vh; overflow-y: auto;
             box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
         }
         
         .text-content a { color: #2980b9; font-weight: bold; }
-        .text-content ul { padding-left: 20px; margin: 10px 0; }
-        .text-content li { margin-bottom: 8px; }
+        .text-content ul { padding-left: 20px; margin: 8px 0; }
+        .text-content li { margin-bottom: 6px; }
 
         .btn-container { display: flex; flex-direction: column; gap: 10px; width: 80%; max-width: 300px; }
 
@@ -131,17 +131,21 @@
                 <strong>CONTROLS:</strong><br>
                 ↔ Swipe Left/Right to switch lanes.<br>
                 ↑ Swipe UP to <strong>Jump</strong>.<br><br>
-                <strong>THE TREADMILL:</strong>
+                
+                <strong style="color:#27ae60;">🟢 TO COLLECT:</strong>
                 <ul>
-                    <li>📄 <strong>Pages:</strong> Collect +2 Pages. 15 Pages = 1 Pub!</li>
+                    <li>📄 <strong>Pages:</strong> +2 Pages. 15 Pages = 1 Pub!</li>
                     <li>🟦 <strong>Open Data:</strong> +5 Pages.</li>
-                    <li>🛡️ <strong>Preregistration:</strong> Red Badge. Protects you from the dangers of p-hacking!</li>
-                    <li>🟪 <strong>p-Hacking:</strong> Speeds you up dangerously, unless you Preregistered!</li>
-                    <li>📜 <strong>Grants:</strong> Protects from 3 APC fees.</li>
-                    <li>❤️ <strong>Lives:</strong> You have 3. Gain +1 per Level Up.</li>
+                    <li>📜 <strong>Grants:</strong> Protects from 3 APCs (Stackable!).</li>
+                    <li>🛡️ <strong>Preregistration:</strong> Protects against p-hacking dangers.</li>
+                    <li>🟪 <strong>p-Hacking:</strong> Speeds you up to get pages fast!</li>
+                </ul>
+                
+                <strong style="color:#c0392b;">🔴 TO AVOID (JUMP OVER!):</strong>
+                <ul>
                     <li>🧱 <strong>Paywalls:</strong> Covers 2 lanes. DODGE or JUMP!</li>
-                    <li>📚 <strong>Teaching/Grading:</strong> Stacks & Chalkboards. JUMP over them!</li>
-                    <li><strong style="color:red;">$</strong> <strong>APCs:</strong> JUMP over, or use a Grant.</li>
+                    <li>📚 <strong>Grading/Teaching:</strong> Blocks the lane. JUMP!</li>
+                    <li><strong style="color:red;">$</strong> <strong>APCs:</strong> Gives you 1 Pub, but drains 1 Life! (Grants pay this safely).</li>
                 </ul>
             </div>
             <div class="btn-container">
@@ -205,14 +209,13 @@
         // --- AUDIO ENGINE ---
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         let bgmTimer, nextNoteTime = 0, bgmStep = 0;
-        let gameState = 'menu'; // 'menu', 'about', 'playing', 'gameover'
+        let gameState = 'menu'; 
 
         function getFreq(note) { return 440 * Math.pow(2, (note - 69) / 12); }
 
         function btnClick(action) {
             if (audioCtx.state === 'suspended') audioCtx.resume();
             
-            // Menu Click Sound
             let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
             osc.connect(gain); gain.connect(audioCtx.destination);
             osc.type = 'square'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
@@ -221,7 +224,6 @@
             gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
             osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.05);
 
-            // Action Routing
             if (action === 'start-screen' || action === 'tutorial-screen') {
                 gameState = 'menu'; clearTimeout(bgmTimer); showScreen(action);
             } else if (action === 'about-screen') {
@@ -313,7 +315,6 @@
                     if (step % 4 === 2) playDrum(nextNoteTime, false); 
                 }
 
-                // Tempo Management
                 let currentSpeed = 5; 
                 if (gameState === 'playing') currentSpeed = gameSpeed * (isPhacking ? 1.5 : 1);
                 else currentSpeed = 7; // About screen speed
@@ -327,23 +328,27 @@
             bgmTimer = setTimeout(scheduleBGM, 50);
         }
 
-        // Easter Egg: Journey Whistle
+        // Easter Egg: Smooth Sine Trill Whistle
         let lastWhistle = 0;
         function playWhistle() {
             if (gameState !== 'playing') return;
             let now = audioCtx.currentTime;
-            if (now - lastWhistle < 1.0) return; // Prevent spam
+            if (now - lastWhistle < 1.0) return; 
             lastWhistle = now;
             
-            [523.25, 659.25, 783.99].forEach(freq => { // C Major Chord
-                let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
-                osc.type = 'sine'; osc.frequency.value = freq;
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                gain.gain.setValueAtTime(0, now);
-                gain.gain.linearRampToValueAtTime(0.05, now + 0.1);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
-                osc.start(now); osc.stop(now + 1.5);
-            });
+            let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
+            osc.type = 'sine'; osc.connect(gain); gain.connect(audioCtx.destination);
+            
+            // Nice melodic slide matching the C Major key
+            osc.frequency.setValueAtTime(1046.50, now); // C6
+            osc.frequency.exponentialRampToValueAtTime(1318.51, now + 0.15); // E6
+            osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.3); // C6
+            
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(0.1, now + 0.1);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+            
+            osc.start(now); osc.stop(now + 0.4);
             spawnParticles(player.x, player.renderY - 40, '#f1c40f', 1, "🎵");
         }
 
@@ -407,11 +412,15 @@
         let pages = 0; let pubs = 0; let currentLevel = 0;
         const colors = {'W':'#ffffff', 'B':'#000000', 'C':'#ffc0cb', 'b':'#2980b9', 'g':'#95a5a6', 'Y':'#f1c40f'};
 
+        function directAddPub() {
+            pubs++; pubsEl.innerText = pubs;
+            checkLevelUp();
+        }
+
         function addPages(amount) {
             pages += amount;
             while (pages >= 15) {
-                pages -= 15; pubs++; pubsEl.innerText = pubs;
-                checkLevelUp();
+                pages -= 15; directAddPub();
             }
             pagesEl.innerText = pages;
         }
@@ -485,7 +494,7 @@
                 player.isJumping = true; player.jumpProgress = 0; playSound('jump');
             }
             if (dir === 'down') {
-                playWhistle(); // Easter Egg
+                playWhistle(); 
             }
         }
         
@@ -545,13 +554,12 @@
             else if (rand < 0.35) type = 'os_badge';
             else if (rand < 0.40 + grantChance) type = 'grant';
             else if (rand < 0.45 + grantChance) type = 'prereg';
-            else if (rand < 0.60 + grantChance) type = (Math.random() < 0.5) ? 'stack' : 'chalkboard'; // Teaching
+            else if (rand < 0.60 + grantChance) type = (Math.random() < 0.5) ? 'stack' : 'chalkboard'; 
             else if (rand < 0.75 + grantChance) type = 'paywall';
             else if (rand < 0.95 + grantChance) type = 'apc';
             else type = 'phack';
 
             if (type === 'paywall') {
-                // Blocks exactly 2 out of 3 lanes
                 let safeLane = Math.floor(Math.random() * 3);
                 for (let i=0; i<3; i++) {
                     if (i !== safeLane && !entities.some(e => e.lane === i && e.y < 200)) {
@@ -598,14 +606,13 @@
 
         function takeDamage() {
             if (player.invulnTimer > 0) return;
-            
             player.lives--; updateLivesUI();
             playSound('crash');
             
             if (player.lives <= 0) {
                 gameOver();
             } else {
-                player.invulnTimer = 60; // 1 second invuln
+                player.invulnTimer = 60; 
                 warningFlash.classList.add('warning-active');
                 setTimeout(() => warningFlash.classList.remove('warning-active'), 150);
                 canvas.style.transform = "translate(10px, 0px)";
@@ -641,14 +648,14 @@
                 e.y += activeSpeed;
 
                 if (e.lane === player.lane && Math.abs(e.y - GROUND_Y) < 40 && !e.marked) {
-                    let isHighUp = (GROUND_Y - player.renderY) > 35; // easily clearable threshold
+                    let isHighUp = (GROUND_Y - player.renderY) > 35;
 
                     if (e.type === 'paper' || e.type === 'os_badge' || e.type === 'grant' || e.type === 'prereg' || e.type === 'phack') {
-                        if (isHighUp) return; // Jumped over it, DO NOT COLLECT
+                        if (isHighUp) return; 
                         
                         if (e.type === 'paper') { addPages(2); playSound('coin'); e.marked = true; spawnParticles(e.x, e.y, '#bdc3c7', 10); spawnParticles(e.x, e.y - 20, '#2c3e50', 1, "+2 Pgs"); }
                         if (e.type === 'os_badge') { addPages(5); playSound('coin'); e.marked = true; spawnParticles(e.x, e.y, '#2980b9', 15); spawnParticles(e.x, e.y - 20, '#2980b9', 1, "+5 Pgs"); }
-                        if (e.type === 'grant') { player.grantCharges = 3; playSound('grant'); e.marked = true; spawnParticles(e.x, e.y, '#27ae60', 20); }
+                        if (e.type === 'grant') { player.grantCharges += 3; playSound('grant'); e.marked = true; spawnParticles(e.x, e.y, '#27ae60', 20); }
                         if (e.type === 'prereg') { player.preregShield = true; playSound('powerup'); e.marked = true; spawnParticles(e.x, e.y, '#c0392b', 20); }
                         if (e.type === 'phack') {
                             e.marked = true;
@@ -661,13 +668,17 @@
                         }
                     }
                     else if (e.type === 'stack' || e.type === 'chalkboard' || e.type === 'paywall' || e.type === 'apc') {
-                        if (isHighUp) return; // DODGED BY JUMPING
+                        if (isHighUp) return; 
                         
-                        if (e.type === 'apc' && player.grantCharges > 0) {
-                            player.grantCharges--; e.marked = true; playSound('powerup'); spawnParticles(e.x, e.y, '#27ae60', 20);
+                        if (e.type === 'apc') {
+                            e.marked = true;
+                            if (player.grantCharges > 0) {
+                                player.grantCharges--; directAddPub(); playSound('coin'); spawnParticles(e.x, e.y, '#27ae60', 20);
+                            } else {
+                                directAddPub(); spawnParticles(e.x, e.y, '#c0392b', 30); takeDamage();
+                            }
                         } else {
-                            e.marked = true; spawnParticles(e.x, e.y, '#c0392b', 30);
-                            takeDamage();
+                            e.marked = true; spawnParticles(e.x, e.y, '#c0392b', 30); takeDamage();
                         }
                     }
                 }
@@ -717,7 +728,6 @@
             ctx.textAlign = "center"; ctx.textBaseline = "middle";
 
             entities.forEach(e => {
-                // Ground shadow - Red for dangerous objects
                 ctx.fillStyle = (e.type==='apc'||e.type==='paywall'||e.type==='stack'||e.type==='chalkboard') ? "rgba(231,76,60,0.4)" : "rgba(0,0,0,0.2)";
                 
                 if (e.type === 'paywall') {
@@ -753,23 +763,25 @@
                     ctx.fillText("p", e.x, e.y);
                 }
                 else if (e.type === 'stack') {
-                    // Mountain of grading papers
-                    ctx.fillStyle = '#eee'; ctx.fillRect(e.x-15, e.y-25, 30, 10);
-                    ctx.fillStyle = '#fff'; ctx.fillRect(e.x-17, e.y-30, 34, 10);
-                    ctx.fillStyle = '#f9f9f9'; ctx.fillRect(e.x-14, e.y-35, 28, 10);
-                    ctx.fillStyle = '#fff'; ctx.fillRect(e.x-16, e.y-40, 32, 10);
-                    // Red Pen on top
+                    // Desk Tray base
+                    ctx.fillStyle = '#8B4513'; ctx.fillRect(e.x-22, e.y-10, 44, 10);
+                    // Folders and papers
+                    ctx.fillStyle = '#f4d03f'; ctx.fillRect(e.x-18, e.y-20, 36, 10);
+                    ctx.fillStyle = '#fff'; ctx.fillRect(e.x-16, e.y-25, 32, 10);
+                    ctx.fillStyle = '#e67e22'; ctx.fillRect(e.x-14, e.y-30, 28, 10);
+                    ctx.fillStyle = '#f9f9f9'; ctx.fillRect(e.x-16, e.y-35, 32, 10);
+                    // Dark Outlines
+                    ctx.strokeStyle = '#333'; ctx.lineWidth = 1;
+                    ctx.strokeRect(e.x-18, e.y-20, 36, 10); ctx.strokeRect(e.x-16, e.y-25, 32, 10);
+                    ctx.strokeRect(e.x-14, e.y-30, 28, 10); ctx.strokeRect(e.x-16, e.y-35, 32, 10);
+                    // Red Pen
                     ctx.fillStyle = '#c0392b'; ctx.beginPath();
-                    ctx.moveTo(e.x-10, e.y-42); ctx.lineTo(e.x+12, e.y-38); ctx.lineTo(e.x+14, e.y-40); ctx.lineTo(e.x-8, e.y-44); ctx.fill();
+                    ctx.moveTo(e.x-10, e.y-37); ctx.lineTo(e.x+12, e.y-33); ctx.lineTo(e.x+14, e.y-35); ctx.lineTo(e.x-8, e.y-39); ctx.fill();
                 }
                 else if (e.type === 'chalkboard') {
-                    // Frame
                     ctx.fillStyle = '#8B4513'; ctx.fillRect(e.x-25, e.y-45, 50, 40);
-                    // Legs
                     ctx.fillRect(e.x-22, e.y-5, 4, 10); ctx.fillRect(e.x+18, e.y-5, 4, 10);
-                    // Board
                     ctx.fillStyle = '#2E4B31'; ctx.fillRect(e.x-21, e.y-41, 42, 32);
-                    // Chalk
                     ctx.fillStyle = '#fff'; ctx.font = "12px 'Comic Sans MS', cursive"; ctx.fillText("A B C", e.x, e.y-25);
                 }
                 else if (e.type === 'paywall') {
@@ -784,7 +796,6 @@
                 }
             });
 
-            // Player Shadow
             let shadowScale = Math.max(0.2, 1 - ((GROUND_Y - player.renderY) / 200));
             ctx.fillStyle = "rgba(0,0,0,0.3)";
             ctx.beginPath(); ctx.ellipse(player.x, GROUND_Y + 20, 25 * shadowScale, 6 * shadowScale, 0, 0, Math.PI*2); ctx.fill();
@@ -794,7 +805,6 @@
                 ctx.fillStyle = "rgba(142, 68, 173, 0.4)"; ctx.fill();
             }
 
-            // Invulnerability flash
             if (player.invulnTimer <= 0 || Math.floor(player.invulnTimer / 5) % 2 !== 0) {
                 drawPixelSprite(ctx, getPlayerSprite(), player.x, player.renderY, 5);
             }

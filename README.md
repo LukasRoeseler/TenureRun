@@ -1,10 +1,10 @@
 # Tenure Run: Publish or Perish!
 
-🎮 **PLAY THE GAME HERE:** [t1p.de/tenurerun](https://t1p.de/tenurerun)
+🎮 **PLAY THE GAME HERE:** [forrt.org/TenureRun](https://forrt.org/TenureRun/)
 
 **Tenure Run** is a browser-based endless runner game built entirely in a single HTML file. It serves as a fun, satirical, and educational metaphor for the modern academic publishing landscape, specifically focusing on the pressure to publish, Questionable Research Practices (QRPs), Article Processing Charges (APCs), and the Open Science movement.
 
-**Cite as:** Röseler (2026). Tenure Run [Video game]. https://lukasroeseler.github.io/TenureRun/ 
+**Cite as:** Röseler (2026). Tenure Run [Video game]. [https://forrt.org/TenureRun/](https://forrt.org/TenureRun/) 
 
 ---
 
@@ -48,4 +48,4 @@ However, the system is changing. Researchers and institutions worldwide are push
 *   **[SF DORA (San Francisco Declaration on Research Assessment)](https://sfdora.org/):** An initiative to halt the use of journal-based metrics to evaluate individual researchers. Check out the [SF DORA National and International Initiatives](https://sfdora.org/national-and-international-initiatives-discussion-group). *Anyone can sign DORA!*
 *   **[FORRT (Framework for Open and Reproducible Research Training)](https://forrt.org/):** An excellent community advocating for Open Science, reproducibility, and social justice in higher education. **[Click here to join FORRT's open Slack channel!](https://join.slack.com/t/forrt/shared_invite/enQtODMwODI0OTk4ODgzLTM0ZTQ3NDk5MzA1ZjBmNWJjYTVlN2Y2YTk0ZTJhYTY5NDliMDYzMjg2MWE0ZDRhOTY0ZDY3OTRlNDA4ODQ3NjQ)**
 
-*(Note: This game is an independent educational project and is not officially affiliated with DORA, CoARA, or FORRT).*
+*(Note: This game is an independent educational project and is not officially affiliated with DORA and CoARA).*

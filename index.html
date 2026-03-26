@@ -60,10 +60,10 @@
         .text-content {
             background: #fff; border: 2px solid #bdc3c7;
             padding: 15px; border-radius: 8px;
-            font-size: 12px; line-height: 1.5;
+            font-size: 13px; line-height: 1.5;
             text-align: left; margin-bottom: 15px;
             width: 100%; max-width: 400px;
-            max-height: 55vh; overflow-y: auto;
+            max-height: 50vh; overflow-y: auto;
             box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
         }
         
@@ -72,6 +72,7 @@
         .text-content li { margin-bottom: 6px; }
 
         .btn-container { display: flex; flex-direction: column; gap: 10px; width: 80%; max-width: 300px; }
+        .share-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
 
         button {
             font-family: 'Press Start 2P', monospace;
@@ -84,6 +85,12 @@
         button:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #1a252f; }
         .btn-green { background: #27ae60; border-color: #16a085; }
         .btn-orange { background: #e67e22; border-color: #d35400; }
+        
+        /* Share Buttons */
+        .btn-share { padding: 10px; font-size: 16px; box-shadow: 2px 2px 0px #111; }
+        .btn-bsky { background: #0085ff; border-color: #006bce; }
+        .btn-twit { background: #000000; border-color: #333333; }
+        .btn-mast { background: #563acc; border-color: #452e99; }
 
         #warning-flash {
             position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
@@ -95,6 +102,7 @@
         @media (max-width: 400px) {
             h1 { font-size: 20px; }
             .text-content { font-size: 11px; }
+            .btn-share { font-size: 14px; padding: 8px; }
         }
     </style>
 </head>
@@ -169,8 +177,15 @@
         <!-- Game Over Screen -->
         <div id="game-over-screen" class="screen hidden">
             <h1 style="color: #c0392b; font-size: 18px; line-height: 1.6;">You did not publish enough<br>and thus had to perish.</h1>
-            <h2 style="margin: 10px 0; color:#333;">Publications: <span id="final-score" style="color:#2980b9;">0</span></h2>
-            <h2 style="margin: 5px 0 15px 0; color:#27ae60; font-size:14px;">Final Rank: <span id="final-level"></span></h2>
+            <h2 style="margin: 5px 0; color:#333; font-size:14px;">Rank: <span id="final-level" style="color:#27ae60;"></span></h2>
+            <h2 style="margin: 5px 0; color:#333; font-size:14px;">Publications: <span id="final-score" style="color:#2980b9;">0</span></h2>
+            <h2 style="margin: 5px 0 15px 0; color:#333; font-size:14px;">Total APCs Paid: <span id="final-apc" style="color:#c0392b;">$0</span></h2>
+
+            <div class="share-container">
+                <button class="btn-share btn-bsky" onclick="shareSocial('bluesky')" title="Share on Bluesky">🦋</button>
+                <button class="btn-share btn-twit" onclick="shareSocial('twitter')" title="Share on X/Twitter">🐦</button>
+                <button class="btn-share btn-mast" onclick="shareSocial('mastodon')" title="Share on Mastodon">🐘</button>
+            </div>
             
             <div class="text-content" style="font-size: 11px; text-align: center;">
                 Research assessment is tough, often prioritizing quantity over quality, but the system is changing. Researchers worldwide are joining <strong>CoARA</strong>, signing <strong><a href="https://sfdora.org/national-and-international-initiatives-discussion-group" target="_blank">SF DORA Initiatives</a></strong>, and building communities like <strong><a href="https://join.slack.com/t/forrt/shared_invite/enQtODMwODI0OTk4ODgzLTM0ZTQ3NDk5MzA1ZjBmNWJjYTVlN2Y2YTk0ZTJhYTY5NDliMDYzMjg2MWE0ZDRhOTY0ZDY3OTRlNDA4ODQ3NjQ" target="_blank">FORRT</a></strong> to push for fairer evaluations. You can join them!
@@ -259,16 +274,11 @@
         const phackMelody = [72, 73, 74, 75, 76, 75, 74, 73];
         const phackBass = [48, 0, 49, 0, 50, 0, 51, 0];
 
-        function playDrum(time, isKick) {
+        function playKick(time) {
             let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
             osc.connect(gain); gain.connect(audioCtx.destination);
-            if (isKick) {
-                osc.frequency.setValueAtTime(120, time); osc.frequency.exponentialRampToValueAtTime(0.01, time + 0.1);
-                gain.gain.setValueAtTime(0.3, time); gain.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
-            } else {
-                osc.type = 'square'; osc.frequency.setValueAtTime(800, time);
-                gain.gain.setValueAtTime(0.05, time); gain.gain.exponentialRampToValueAtTime(0.01, time + 0.05);
-            }
+            osc.frequency.setValueAtTime(120, time); osc.frequency.exponentialRampToValueAtTime(0.01, time + 0.1);
+            gain.gain.setValueAtTime(0.3, time); gain.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
             osc.start(time); osc.stop(time + 0.1);
         }
 
@@ -309,15 +319,15 @@
                     osc.start(nextNoteTime); osc.stop(nextNoteTime + 0.2);
                 }
 
-                // LEVEL 2+: Drums play
+                // LEVEL 2+: Kick Drums play
                 if ((currentLevel >= 2 || gameState === 'about') && !isPhacking) {
-                    if (step % 4 === 0) playDrum(nextNoteTime, true); 
-                    if (step % 4 === 2) playDrum(nextNoteTime, false); 
+                    // Only Kick drums, no snare "beeps"
+                    if (step % 4 === 0 || step % 4 === 2) playKick(nextNoteTime); 
                 }
 
                 let currentSpeed = 5; 
                 if (gameState === 'playing') currentSpeed = gameSpeed * (isPhacking ? 1.5 : 1);
-                else currentSpeed = 7; // About screen speed
+                else currentSpeed = 7; 
                 
                 let currentBPM = 80 + (currentSpeed * 8); 
                 let stepDuration = 60 / (currentBPM * 2);
@@ -339,7 +349,6 @@
             let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
             osc.type = 'sine'; osc.connect(gain); gain.connect(audioCtx.destination);
             
-            // Nice melodic slide matching the C Major key
             osc.frequency.setValueAtTime(1046.50, now); // C6
             osc.frequency.exponentialRampToValueAtTime(1318.51, now + 0.15); // E6
             osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.3); // C6
@@ -401,6 +410,21 @@
             }
         }
 
+        // --- SOCIAL SHARING ---
+        function shareSocial(platform) {
+            btnClick('audio-only'); // Play button sound
+            let apcCost = totalAPCs * 2500;
+            const text = `I reached the rank of ${levels[currentLevel].name} in Tenure Run! 🎓\n\nI published ${pubs} papers and paid $${apcCost.toLocaleString()} in APCs to publishers. My grant money is gone and I am exhausted. 💸\n\nHow far can you make it? Play now at https://t1p.de/tenurerun`;
+            const encoded = encodeURIComponent(text);
+            
+            if (platform === 'twitter') window.open(`https://twitter.com/intent/tweet?text=${encoded}`, '_blank');
+            if (platform === 'bluesky') window.open(`https://bsky.app/intent/compose?text=${encoded}`, '_blank');
+            if (platform === 'mastodon') {
+                const instance = prompt("Enter your Mastodon instance URL (e.g., mastodon.social):", "mastodon.social");
+                if (instance) window.open(`https://${instance}/share?text=${encoded}`, '_blank');
+            }
+        }
+
         // --- LEVELING SYSTEM & SPRITES ---
         const levels = [
             { name: "PhD Student", req: 0,   colorBody: 'W', colorTie: 'b' },
@@ -409,7 +433,7 @@
             { name: "Asst. Prof", req: 21,   colorBody: 'B', colorTie: 'W' } 
         ];
 
-        let pages = 0; let pubs = 0; let currentLevel = 0;
+        let pages = 0; let pubs = 0; let currentLevel = 0; let totalAPCs = 0;
         const colors = {'W':'#ffffff', 'B':'#000000', 'C':'#ffc0cb', 'b':'#2980b9', 'g':'#95a5a6', 'Y':'#f1c40f'};
 
         function directAddPub() {
@@ -519,7 +543,7 @@
         }, {passive: false});
 
         function startGame() {
-            gameState = 'playing'; pages = 0; pubs = 0; currentLevel = 0; gameSpeed = 5; frameCount = 0; pageNum = 2;
+            gameState = 'playing'; pages = 0; pubs = 0; currentLevel = 0; totalAPCs = 0; gameSpeed = 5; frameCount = 0; pageNum = 2;
             entities = []; particles = []; textLines = []; pageBreaks = [];
             pubsEl.innerText = pubs; pagesEl.innerText = pages; levelEl.innerText = levels[0].name;
             
@@ -671,9 +695,9 @@
                         if (isHighUp) return; 
                         
                         if (e.type === 'apc') {
-                            e.marked = true;
+                            e.marked = true; totalAPCs++;
                             if (player.grantCharges > 0) {
-                                player.grantCharges--; directAddPub(); playSound('coin'); spawnParticles(e.x, e.y, '#27ae60', 20);
+                                player.grantCharges--; directAddPub(); playSound('grant'); spawnParticles(e.x, e.y, '#27ae60', 20);
                             } else {
                                 directAddPub(); spawnParticles(e.x, e.y, '#c0392b', 30); takeDamage();
                             }
@@ -697,6 +721,7 @@
             playGameOverFanfare();
             document.getElementById('final-score').innerText = pubs;
             document.getElementById('final-level').innerText = levels[currentLevel].name;
+            document.getElementById('final-apc').innerText = "$" + (totalAPCs * 2500).toLocaleString();
             showScreen('game-over-screen');
         }
 
@@ -763,18 +788,14 @@
                     ctx.fillText("p", e.x, e.y);
                 }
                 else if (e.type === 'stack') {
-                    // Desk Tray base
                     ctx.fillStyle = '#8B4513'; ctx.fillRect(e.x-22, e.y-10, 44, 10);
-                    // Folders and papers
                     ctx.fillStyle = '#f4d03f'; ctx.fillRect(e.x-18, e.y-20, 36, 10);
                     ctx.fillStyle = '#fff'; ctx.fillRect(e.x-16, e.y-25, 32, 10);
                     ctx.fillStyle = '#e67e22'; ctx.fillRect(e.x-14, e.y-30, 28, 10);
                     ctx.fillStyle = '#f9f9f9'; ctx.fillRect(e.x-16, e.y-35, 32, 10);
-                    // Dark Outlines
                     ctx.strokeStyle = '#333'; ctx.lineWidth = 1;
                     ctx.strokeRect(e.x-18, e.y-20, 36, 10); ctx.strokeRect(e.x-16, e.y-25, 32, 10);
                     ctx.strokeRect(e.x-14, e.y-30, 28, 10); ctx.strokeRect(e.x-16, e.y-35, 32, 10);
-                    // Red Pen
                     ctx.fillStyle = '#c0392b'; ctx.beginPath();
                     ctx.moveTo(e.x-10, e.y-37); ctx.lineTo(e.x+12, e.y-33); ctx.lineTo(e.x+14, e.y-35); ctx.lineTo(e.x-8, e.y-39); ctx.fill();
                 }

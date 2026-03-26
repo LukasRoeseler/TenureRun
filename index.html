@@ -237,13 +237,16 @@
 
     <script>
         // --- SUPABASE BACKEND CONFIGURATION ---
-        // REPLACE THESE WITH YOUR OWN SUPABASE CREDENTIALS ONCE CREATED
         const supabaseUrl = 'https://yteznoegcecmmfltcerq.supabase.co';
-        const supabaseAnonKey = 'sb_publishable_7SYMY2ZNWkf48BR9BO1YJA_MM_cmyYL';
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0ZXpub2VnY2VjbW1mbHRjZXJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NzM2NjIsImV4cCI6MjA5MDA0OTY2Mn0.s984HqrP2LXvpC8etht0jNHGokJQHJMlpouRGyPQr7Q';
         
-        let supabase = null;
-        if (supabaseUrl !== 'https://yteznoegcecmmfltcerq.supabase.co') {
-            supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+        let dbClient = null;
+        try {
+            if (window.supabase) {
+                dbClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+            }
+        } catch(e) {
+            console.error("Supabase init failed:", e);
         }
 
         const canvas = document.getElementById('gameCanvas');
@@ -271,23 +274,34 @@
         }
 
         // --- AUDIO ENGINE ---
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let audioCtx;
         let bgmTimer, nextNoteTime = 0, bgmStep = 0;
         let gameState = 'menu'; 
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
 
         function getFreq(note) { return 440 * Math.pow(2, (note - 69) / 12); }
 
         function btnClick(action) {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
+            initAudio();
             
-            let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.type = 'square'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.05);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
-            osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.05);
+            // Menu Click Sound
+            try {
+                let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.type = 'square'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.05);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.05);
+            } catch(e) {}
 
+            // Action Routing
             if (action === 'start-screen' || action === 'tutorial-screen') {
                 gameState = 'menu'; clearTimeout(bgmTimer); showScreen(action);
             } else if (action === 'about-screen') {
@@ -324,6 +338,7 @@
         const phackBass = [48, 0, 49, 0, 50, 0, 51, 0];
 
         function playKick(time) {
+            if (!audioCtx) return;
             let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
             osc.connect(gain); gain.connect(audioCtx.destination);
             osc.frequency.setValueAtTime(120, time); osc.frequency.exponentialRampToValueAtTime(0.01, time + 0.1);
@@ -332,7 +347,7 @@
         }
 
         function scheduleBGM() {
-            if (gameState === 'menu' || gameState === 'gameover') return;
+            if (!audioCtx || gameState === 'menu' || gameState === 'gameover') return;
             let currentTime = audioCtx.currentTime;
             
             while (nextNoteTime < currentTime + 0.1) {
@@ -383,10 +398,9 @@
             bgmTimer = setTimeout(scheduleBGM, 50);
         }
 
-        // Easter Egg: Randomized Harmonic Sine Trill
         let lastWhistle = 0;
         function playWhistle() {
-            if (gameState !== 'playing') return;
+            if (!audioCtx || gameState !== 'playing') return;
             let now = audioCtx.currentTime;
             if (now - lastWhistle < 1.0) return; 
             lastWhistle = now;
@@ -412,8 +426,9 @@
         }
 
         function playGameOverFanfare() {
+            if (!audioCtx) return;
             let now = audioCtx.currentTime;
-            [261.63, 196.00, 155.56, 130.81].forEach((freq, i) => { // Descending C4, G3, Eb3, C3
+            [261.63, 196.00, 155.56, 130.81].forEach((freq, i) => { 
                 let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
                 osc.type = 'sawtooth'; osc.frequency.value = freq;
                 osc.connect(gain); gain.connect(audioCtx.destination);
@@ -430,7 +445,7 @@
         }
 
         function playSound(type) {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
+            if (!audioCtx) return;
             const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
             osc.connect(gain); gain.connect(audioCtx.destination); const now = audioCtx.currentTime;
             
@@ -471,7 +486,7 @@
         function shareSocial(platform) {
             btnClick('audio-only'); 
             let apcCost = totalAPCs * 2500;
-            const text = `I reached the rank of ${levels[currentLevel].name} in Tenure Run! 🎓\n\nI published ${pubs} papers and paid $${apcCost.toLocaleString()} in APCs. My grant money is gone and I am exhausted. 💸\n\nHow far can you make it? Play now at https://t1p.de/tenurerun`;
+            const text = `I reached the rank of ${levels[currentLevel].name} in Tenure Run! 🎓\n\nI published ${pubs} papers and paid $${apcCost.toLocaleString()} in APCs to publishers. My grant money is gone and I am exhausted. 💸\n\nHow far can you make it? Play now at https://t1p.de/tenurerun`;
             const encoded = encodeURIComponent(text);
             
             if (platform === 'twitter') window.open(`https://twitter.com/intent/tweet?text=${encoded}`, '_blank');
@@ -485,8 +500,8 @@
         // --- SUPABASE LEADERBOARD LOGIC ---
         async function handleLeaderboard() {
             const lbContent = document.getElementById('lb-content');
-            if (!supabase) {
-                lbContent.innerHTML = "<div style='text-align:center; padding:10px; color:#c0392b;'>Leaderboard disabled.<br>Supabase keys missing in code.</div>";
+            if (!dbClient) {
+                lbContent.innerHTML = "<div style='text-align:center; padding:10px; color:#c0392b;'>Leaderboard disabled.<br>Supabase keys invalid or missing.</div>";
                 return;
             }
 
@@ -494,15 +509,13 @@
             lbContent.innerHTML = "<div style='text-align:center; padding:10px;'>Submitting...</div>";
 
             try {
-                // Submit Score
                 if (pubs > 0) {
-                    await supabase.from('leaderboard').insert([
+                    await dbClient.from('leaderboard').insert([
                         { nickname: nickname, pubs: pubs, apcs: totalAPCs }
                     ]);
                 }
 
-                // Fetch Top 20
-                const { data, error } = await supabase
+                const { data, error } = await dbClient
                     .from('leaderboard')
                     .select('*')
                     .order('pubs', { ascending: false })
@@ -511,12 +524,10 @@
 
                 if (error) throw error;
 
-                // Render
                 lbContent.innerHTML = "";
                 data.forEach((row, index) => {
                     const div = document.createElement('div');
                     div.className = 'lb-row';
-                    // Crown for top 3
                     let medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`;
                     div.innerHTML = `<span style="width:25px;">${medal}</span> 
                                      <span class="lb-name">${row.nickname}</span> 
@@ -634,9 +645,13 @@
         });
 
         let touchX = 0, touchY = 0;
-        canvas.addEventListener('touchstart', e => { e.preventDefault(); touchX = e.touches[0].screenX; touchY = e.touches[0].screenY; }, {passive: false});
+        canvas.addEventListener('touchstart', e => { 
+            if(e.target === canvas) e.preventDefault(); 
+            touchX = e.touches[0].screenX; touchY = e.touches[0].screenY; 
+        }, {passive: false});
+        
         canvas.addEventListener('touchend', e => {
-            e.preventDefault();
+            if(e.target === canvas) e.preventDefault();
             if (gameState !== 'playing') return;
             let dx = e.changedTouches[0].screenX - touchX; let dy = e.changedTouches[0].screenY - touchY;
             if (Math.abs(dx) > Math.abs(dy)) {
@@ -647,6 +662,7 @@
         }, {passive: false});
 
         function startGame() {
+            initAudio();
             gameState = 'playing'; pages = 0; pubs = 0; currentLevel = 0; totalAPCs = 0; gameSpeed = 5; frameCount = 0; pageNum = 2;
             entities = []; particles = []; textLines = []; pageBreaks = [];
             pubsEl.innerText = pubs; pagesEl.innerText = pages; levelEl.innerText = levels[0].name;
@@ -659,7 +675,6 @@
             statusIndicator.innerText = ""; warningFlash.classList.remove('warning-active');
             
             showScreen(''); 
-            if (audioCtx.state === 'suspended') audioCtx.resume();
             clearTimeout(bgmTimer); bgmStep = 0; nextNoteTime = audioCtx.currentTime + 0.1;
             scheduleBGM();
             animationId = requestAnimationFrame(gameLoop);
@@ -681,11 +696,11 @@
             if (rand < 0.30) type = 'paper';
             else if (rand < 0.40) type = 'os_badge';
             else if (rand < 0.45) type = 'prereg';
-            else if (rand < 0.47) type = 'grant'; // 2% 
-            else if (rand < 0.49) type = 'forrt'; // 2%
+            else if (rand < 0.47) type = 'grant'; 
+            else if (rand < 0.49) type = 'forrt'; 
             else if (rand < 0.64) type = (Math.random() < 0.5) ? 'stack' : 'chalkboard'; 
             else if (rand < 0.79) type = 'paywall';
-            else if (rand < 0.95) type = 'apc';   // 16% (8x more likely than grants)
+            else if (rand < 0.95) type = 'apc';   
             else type = 'phack';
 
             if (type === 'paywall') {
@@ -780,7 +795,7 @@
                     let isHighUp = (GROUND_Y - player.renderY) > 35;
 
                     if (e.type === 'paper' || e.type === 'os_badge' || e.type === 'grant' || e.type === 'prereg' || e.type === 'phack' || e.type === 'forrt') {
-                        if (isHighUp) return; // Jumped over it
+                        if (isHighUp) return; 
                         
                         if (e.type === 'paper') { addPages(2); playSound('coin'); e.marked = true; spawnParticles(e.x, e.y, '#bdc3c7', 10); spawnParticles(e.x, e.y - 20, '#2c3e50', 1, "+2 Pgs"); }
                         if (e.type === 'os_badge') { addPages(5); playSound('coin'); e.marked = true; spawnParticles(e.x, e.y, '#2980b9', 15); spawnParticles(e.x, e.y - 20, '#2980b9', 1, "+5 Pgs"); }
@@ -830,7 +845,7 @@
             document.getElementById('final-apc').innerText = "$" + (totalAPCs * 2500).toLocaleString();
             
             showScreen('game-over-screen');
-            handleLeaderboard(); // Call Supabase logic
+            handleLeaderboard();
         }
 
         // --- RENDER ENGINE ---

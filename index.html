@@ -119,8 +119,8 @@
         <div id="start-screen" class="screen">
             <h1>TENURE RUN</h1>
             <div class="btn-container">
-                <button onclick="showScreen('tutorial-screen')">PUBLISH OR PERISH</button>
-                <button class="btn-green" onclick="showScreen('about-screen')">ABOUT</button>
+                <button onclick="btnClick('tutorial-screen')">PUBLISH OR PERISH</button>
+                <button class="btn-green" onclick="btnClick('about-screen')">ABOUT</button>
             </div>
         </div>
 
@@ -145,8 +145,8 @@
                 </ul>
             </div>
             <div class="btn-container">
-                <button class="btn-orange" onclick="startGame()">START RUN</button>
-                <button onclick="showScreen('start-screen')">BACK</button>
+                <button class="btn-orange" onclick="btnClick('start-game')">START RUN</button>
+                <button onclick="btnClick('start-screen')">BACK</button>
             </div>
         </div>
 
@@ -157,9 +157,9 @@
                 <p>This game is a comical take on the <strong>"publish or perish"</strong> treadmill that early-career researchers must navigate to keep their jobs or get promoted.</p>
                 <p>It aims to raise awareness of systemic issues in academia (like paywalls, massive APC fees, teaching overloads, and p-hacking out of desperation), while highlighting positive solutions.</p>
                 <p>Researchers worldwide are pushing for fairer evaluations by signing <strong><a href="https://sfdora.org/" target="_blank">SF DORA</a></strong> and joining <strong><a href="https://coara.eu/" target="_blank">CoARA</a></strong> (this game is not affiliated with them). Everyone can sign SF DORA to support assessing research on its own merits rather than journal metrics.</p>
-                <p>To join a large community concerned with Open Science and social justice, visit <strong><a href="https://forrt.org/" target="_blank">FORRT.org</a></strong>.</p>
+                <p>To join a large community concerned with Open Science and social justice, join <strong><a href="https://join.slack.com/t/forrt/shared_invite/enQtODMwODI0OTk4ODgzLTM0ZTQ3NDk5MzA1ZjBmNWJjYTVlN2Y2YTk0ZTJhYTY5NDliMDYzMjg2MWE0ZDRhOTY0ZDY3OTRlNDA4ODQ3NjQ" target="_blank">FORRT's open Slack channel!</a></strong></p>
             </div>
-            <button class="btn-green" onclick="showScreen('start-screen')">BACK TO MENU</button>
+            <button class="btn-green" onclick="btnClick('start-screen')">BACK TO MENU</button>
         </div>
 
         <!-- Game Over Screen -->
@@ -169,11 +169,11 @@
             <h2 style="margin: 5px 0 15px 0; color:#27ae60; font-size:14px;">Final Rank: <span id="final-level"></span></h2>
             
             <div class="text-content" style="font-size: 11px; text-align: center;">
-                Research assessment is tough, often prioritizing quantity over quality, but the system is changing. Researchers worldwide are joining <strong>CoARA</strong> and signing <br><br><strong><a href="https://sfdora.org/national-and-international-initiatives-discussion-group" target="_blank">SF DORA Initiatives</a></strong><br><br> to push for fairer evaluations—and you can sign too!
+                Research assessment is tough, often prioritizing quantity over quality, but the system is changing. Researchers worldwide are joining <strong>CoARA</strong>, signing <strong><a href="https://sfdora.org/national-and-international-initiatives-discussion-group" target="_blank">SF DORA Initiatives</a></strong>, and building communities like <strong><a href="https://join.slack.com/t/forrt/shared_invite/enQtODMwODI0OTk4ODgzLTM0ZTQ3NDk5MzA1ZjBmNWJjYTVlN2Y2YTk0ZTJhYTY5NDliMDYzMjg2MWE0ZDRhOTY0ZDY3OTRlNDA4ODQ3NjQ" target="_blank">FORRT</a></strong> to push for fairer evaluations. You can join them!
             </div>
             <div class="btn-container">
-                <button onclick="showScreen('tutorial-screen')">PLAY AGAIN</button>
-                <button class="btn-green" onclick="showScreen('about-screen')">LEARN MORE</button>
+                <button onclick="btnClick('tutorial-screen')">PLAY AGAIN</button>
+                <button class="btn-green" onclick="btnClick('about-screen')">LEARN MORE</button>
             </div>
         </div>
     </div>
@@ -202,13 +202,35 @@
             livesEl.innerText = hearts;
         }
 
-        // --- PROGRESSIVE AUDIO ENGINE ---
+        // --- AUDIO ENGINE ---
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        let bgmTimer;
-        let nextNoteTime = 0;
-        let bgmStep = 0;
+        let bgmTimer, nextNoteTime = 0, bgmStep = 0;
+        let gameState = 'menu'; // 'menu', 'about', 'playing', 'gameover'
 
         function getFreq(note) { return 440 * Math.pow(2, (note - 69) / 12); }
+
+        function btnClick(action) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            // Menu Click Sound
+            let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.type = 'square'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.05);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+            osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.05);
+
+            // Action Routing
+            if (action === 'start-screen' || action === 'tutorial-screen') {
+                gameState = 'menu'; clearTimeout(bgmTimer); showScreen(action);
+            } else if (action === 'about-screen') {
+                gameState = 'about'; showScreen('about-screen');
+                clearTimeout(bgmTimer); bgmStep = 0; nextNoteTime = audioCtx.currentTime + 0.1; scheduleBGM();
+            } else if (action === 'start-game') {
+                startGame();
+            }
+        }
 
         const mainMelody = [
             72,0,76,0,79,0,0,72,  84,0,79,0,76,0,0,0,
@@ -232,17 +254,6 @@
             50,0,0,50,52,0,0,52,  55,0,0,0, 0,0,0,0
         ];
 
-        const mainHarmony = [
-            60,0,64,0,67,0,0,0,   60,0,64,0,67,0,0,0,
-            62,0,65,0,69,0,0,0,   62,0,65,0,69,0,0,0,
-            60,0,64,0,67,0,0,0,   60,0,64,0,67,0,0,0,
-            65,0,69,0,72,0,0,0,   67,0,71,0,74,0,0,0,
-            65,0,0,65,0,0,0,0,    64,0,0,64,0,0,0,0,
-            62,0,0,62,0,0,0,0,    67,0,0,67,0,0,0,0,
-            65,0,0,65,0,0,0,0,    64,0,0,64,0,0,0,0,
-            62,0,0,0,0,0,0,0,     67,0,0,0,0,0,0,0
-        ];
-
         const phackMelody = [72, 73, 74, 75, 76, 75, 74, 73];
         const phackBass = [48, 0, 49, 0, 50, 0, 51, 0];
 
@@ -260,36 +271,42 @@
         }
 
         function scheduleBGM() {
-            if (!isPlaying) return;
+            if (gameState === 'menu' || gameState === 'gameover') return;
             let currentTime = audioCtx.currentTime;
             
             while (nextNoteTime < currentTime + 0.1) {
-                let mNote = 0, bNote = 0, hNote = 0;
+                let mNote = 0, bNote = 0;
                 let step = bgmStep;
+                let isPhacking = (gameState === 'playing' && player.phackTimer > 0);
+                let isFullBand = (gameState === 'about' || (gameState === 'playing' && currentLevel >= 1));
                 
-                if (player.phackTimer > 0) {
+                if (isPhacking) {
                     mNote = phackMelody[step % phackMelody.length];
                     bNote = phackBass[step % phackBass.length];
                 } else {
                     mNote = mainMelody[step % mainMelody.length];
                     bNote = mainBass[step % mainBass.length];
-                    hNote = mainHarmony[step % mainHarmony.length];
                 }
 
+                // Melody: Triangle if level 0, Square if level 1+
                 if (mNote > 0) {
                     let gain = audioCtx.createGain(); gain.connect(audioCtx.destination);
-                    let osc = audioCtx.createOscillator(); osc.type = (player.phackTimer > 0) ? 'sawtooth' : 'square';
+                    let osc = audioCtx.createOscillator(); 
+                    osc.type = isPhacking ? 'sawtooth' : (isFullBand ? 'square' : 'triangle');
                     osc.frequency.setValueAtTime(getFreq(mNote), nextNoteTime); osc.connect(gain);
-                    gain.gain.setValueAtTime(0.04, nextNoteTime); gain.gain.exponentialRampToValueAtTime(0.001, nextNoteTime + 0.15);
+                    gain.gain.setValueAtTime(isFullBand ? 0.04 : 0.06, nextNoteTime); 
+                    gain.gain.exponentialRampToValueAtTime(0.001, nextNoteTime + 0.15);
                     osc.start(nextNoteTime); osc.stop(nextNoteTime + 0.15);
                 }
 
-                if (currentLevel >= 1 && player.phackTimer === 0) {
+                // Drums: Level 1+
+                if (isFullBand && !isPhacking) {
                     if (step % 4 === 0) playDrum(nextNoteTime, true); 
                     if (step % 4 === 2) playDrum(nextNoteTime, false); 
                 }
 
-                if ((currentLevel >= 2 || player.phackTimer > 0) && bNote > 0) {
+                // Bass: Level 0+
+                if (bNote > 0) {
                     let gain = audioCtx.createGain(); gain.connect(audioCtx.destination);
                     let osc = audioCtx.createOscillator(); osc.type = 'triangle';
                     osc.frequency.setValueAtTime(getFreq(bNote), nextNoteTime); osc.connect(gain);
@@ -297,15 +314,11 @@
                     osc.start(nextNoteTime); osc.stop(nextNoteTime + 0.2);
                 }
 
-                if (currentLevel >= 3 && player.phackTimer === 0 && hNote > 0) {
-                    let gain = audioCtx.createGain(); gain.connect(audioCtx.destination);
-                    let osc = audioCtx.createOscillator(); osc.type = 'sine';
-                    osc.frequency.setValueAtTime(getFreq(hNote), nextNoteTime); osc.connect(gain);
-                    gain.gain.setValueAtTime(0.03, nextNoteTime); gain.gain.linearRampToValueAtTime(0.01, nextNoteTime + 0.15);
-                    osc.start(nextNoteTime); osc.stop(nextNoteTime + 0.15);
-                }
+                // Tempo Management
+                let currentSpeed = 5; 
+                if (gameState === 'playing') currentSpeed = gameSpeed * (isPhacking ? 1.5 : 1);
+                else currentSpeed = 7; // About screen speed
                 
-                let currentSpeed = gameSpeed * (player.phackTimer > 0 ? 1.5 : 1);
                 let currentBPM = 80 + (currentSpeed * 8); 
                 let stepDuration = 60 / (currentBPM * 2);
                 
@@ -313,6 +326,44 @@
                 bgmStep++;
             }
             bgmTimer = setTimeout(scheduleBGM, 50);
+        }
+
+        // Easter Egg: Journey Whistle
+        let lastWhistle = 0;
+        function playWhistle() {
+            if (gameState !== 'playing') return;
+            let now = audioCtx.currentTime;
+            if (now - lastWhistle < 1.0) return; // Prevent spam
+            lastWhistle = now;
+            
+            [523.25, 659.25, 783.99].forEach(freq => { // C Major Chord
+                let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
+                osc.type = 'sine'; osc.frequency.value = freq;
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.05, now + 0.1);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
+                osc.start(now); osc.stop(now + 1.5);
+            });
+            spawnParticles(player.x, player.renderY - 40, '#f1c40f', 1, "🎵");
+        }
+
+        function playGameOverFanfare() {
+            let now = audioCtx.currentTime;
+            [261.63, 196.00, 155.56, 130.81].forEach((freq, i) => { // Descending C4, G3, Eb3, C3
+                let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
+                osc.type = 'sawtooth'; osc.frequency.value = freq;
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                let t = now + i * 0.35;
+                gain.gain.setValueAtTime(0.15, t);
+                if (i === 3) {
+                    gain.gain.exponentialRampToValueAtTime(0.001, t + 2.0);
+                    osc.start(t); osc.stop(t + 2.0);
+                } else {
+                    gain.gain.linearRampToValueAtTime(0.01, t + 0.35);
+                    osc.start(t); osc.stop(t + 0.35);
+                }
+            });
         }
 
         function playSound(type) {
@@ -420,7 +471,7 @@
         const LANES = [100, 225, 350];
         const GROUND_Y = 550;
         
-        let isPlaying = false, gameSpeed = 5, frameCount = 0, animationId;
+        let gameSpeed = 5, frameCount = 0, animationId;
         let player = { lane: 1, x: 225, lastX: 225, renderY: GROUND_Y, isJumping: false, jumpProgress: 0, grantCharges: 0, phackTimer: 0, preregShield: false, lives: 3, invulnTimer: 0 };
         let entities = [], particles = [], textLines = [], pageBreaks = [];
         let pageNum = 2;
@@ -428,11 +479,14 @@
         const academicWords = ["Abstract", "Methodology", "Results", "p < 0.05", "N = 342", "Analysis", "Discussion", "Conclusion", "Data Set", "Variables", "Significance", "Reviewer"];
 
         function handleMove(dir) {
-            if (!isPlaying) return;
+            if (gameState !== 'playing') return;
             if (dir === 'left' && player.lane > 0) player.lane--;
             if (dir === 'right' && player.lane < 2) player.lane++;
             if (dir === 'up' && !player.isJumping) {
                 player.isJumping = true; player.jumpProgress = 0; playSound('jump');
+            }
+            if (dir === 'down') {
+                playWhistle(); // Easter Egg
             }
         }
         
@@ -440,23 +494,24 @@
             if (e.key === 'ArrowLeft' || e.key === 'a') handleMove('left');
             if (e.key === 'ArrowRight' || e.key === 'd') handleMove('right');
             if (e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') handleMove('up');
+            if (e.key === 'ArrowDown' || e.key === 's') handleMove('down');
         });
 
         let touchX = 0, touchY = 0;
         canvas.addEventListener('touchstart', e => { e.preventDefault(); touchX = e.touches[0].screenX; touchY = e.touches[0].screenY; }, {passive: false});
         canvas.addEventListener('touchend', e => {
             e.preventDefault();
-            if (!isPlaying) return;
+            if (gameState !== 'playing') return;
             let dx = e.changedTouches[0].screenX - touchX; let dy = e.changedTouches[0].screenY - touchY;
             if (Math.abs(dx) > Math.abs(dy)) {
                 if (dx > 30) handleMove('right'); else if (dx < -30) handleMove('left');
             } else {
-                if (dy < -30) handleMove('up'); 
+                if (dy < -30) handleMove('up'); else if (dy > 30) handleMove('down');
             }
         }, {passive: false});
 
         function startGame() {
-            isPlaying = true; pages = 0; pubs = 0; currentLevel = 0; gameSpeed = 5; frameCount = 0; pageNum = 2;
+            gameState = 'playing'; pages = 0; pubs = 0; currentLevel = 0; gameSpeed = 5; frameCount = 0; pageNum = 2;
             entities = []; particles = []; textLines = []; pageBreaks = [];
             pubsEl.innerText = pubs; pagesEl.innerText = pages; levelEl.innerText = levels[0].name;
             
@@ -497,6 +552,7 @@
             else type = 'phack';
 
             if (type === 'paywall') {
+                // Blocks 2 out of 3 lanes
                 let safeLane = Math.floor(Math.random() * 3);
                 for (let i=0; i<3; i++) {
                     if (i !== safeLane && !entities.some(e => e.lane === i && e.y < 200)) {
@@ -524,7 +580,7 @@
         }
 
         function gameLoop() {
-            if (!isPlaying) return;
+            if (gameState !== 'playing') return;
             frameCount++;
             if (frameCount % 600 === 0) gameSpeed += 0.3; 
             
@@ -586,7 +642,7 @@
                 e.y += activeSpeed;
 
                 if (e.lane === player.lane && Math.abs(e.y - GROUND_Y) < 40 && !e.marked) {
-                    let isHighUp = (GROUND_Y - player.renderY) > 35; // easily clearable
+                    let isHighUp = (GROUND_Y - player.renderY) > 35; // easily clearable threshold
 
                     if (e.type === 'paper' || e.type === 'os_badge' || e.type === 'grant' || e.type === 'prereg' || e.type === 'phack') {
                         if (isHighUp) return; // Jumped over it, DO NOT COLLECT
@@ -626,8 +682,9 @@
         }
 
         function gameOver() {
-            isPlaying = false; cancelAnimationFrame(animationId);
+            gameState = 'gameover'; cancelAnimationFrame(animationId);
             clearTimeout(bgmTimer); 
+            playGameOverFanfare();
             document.getElementById('final-score').innerText = pubs;
             document.getElementById('final-level').innerText = levels[currentLevel].name;
             showScreen('game-over-screen');

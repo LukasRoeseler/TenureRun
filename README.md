@@ -4,6 +4,8 @@
 
 **Tenure Run** is a browser-based endless runner game built entirely in a single HTML file. It serves as a fun, satirical, and educational metaphor for the modern academic publishing landscape, specifically focusing on the pressure to publish, Questionable Research Practices (QRPs), Article Processing Charges (APCs), and the Open Science movement.
 
+**Cite as:** Röseler (2026). Tenure Run [Video game]. https://lukasroeseler.github.io/TenureRun/ 
+
 ---
 
 ## 🎮 How to Play
@@ -34,6 +36,7 @@ As you publish, you will rank up and your character sprite will change:
 2.  **Postdoc:** (3 Pubs) 
 3.  **Lecturer:** (9 Pubs)
 4.  **Assistant Professor:** (21 Pubs)
+5.  **Tenured Professor:** (you will never achieve this level, sorry)
 
 ---
 
@@ -46,20 +49,3 @@ However, the system is changing. Researchers and institutions worldwide are push
 *   **[FORRT (Framework for Open and Reproducible Research Training)](https://forrt.org/):** An excellent community advocating for Open Science, reproducibility, and social justice in higher education. **[Click here to join FORRT's open Slack channel!](https://join.slack.com/t/forrt/shared_invite/enQtODMwODI0OTk4ODgzLTM0ZTQ3NDk5MzA1ZjBmNWJjYTVlN2Y2YTk0ZTJhYTY5NDliMDYzMjg2MWE0ZDRhOTY0ZDY3OTRlNDA4ODQ3NjQ)**
 
 *(Note: This game is an independent educational project and is not officially affiliated with DORA, CoARA, or FORRT).*
-
----
-
-## 🛠️ Technical Details
-*   **Zero External Assets:** The game does not require any external image or audio files to run. Everything is generated dynamically.
-*   **Custom Pixel Art:** All graphics are defined as string arrays inside the JavaScript and drawn directly to the HTML5 `<canvas>`.
-*   **Progressive Web Audio:** Features a custom SNES-style ragtime soundtrack composed entirely in the browser using the `AudioContext` API. The music progressively builds as you level up (Melody -> Bassline -> Drums), changes dynamically when you p-hack, and increases tempo as the game speeds up!
-*   **Mobile Optimized:** The game scales dynamically to fit any screen size and features full touch/swipe controls for mobile play.
-
----
-
-## 💻 How to Host Your Own Copy
-Since the game is contained entirely within `index.html`, you can host it for free in seconds using GitHub Pages:
-1. Fork or clone this repository.
-2. Go to your repository **Settings > Pages**.
-3. Set the source to the `main` branch.
-4. Your game will be live in minutes!

@@ -32,9 +32,10 @@
             position: absolute; top: 0; left: 0; width: 100%;
             padding: 15px; box-sizing: border-box;
             display: flex; justify-content: space-between;
-            color: #111; z-index: 10; pointer-events: none;
+            color: #fff; z-index: 10; pointer-events: none;
             font-size: 14px; font-weight: bold;
-            text-shadow: 2px 2px 0px #fff, -1px -1px 0px #fff, 1px -1px 0px #fff, -1px 1px 0px #fff;
+            /* Strong black outline for readability on bright paper */
+            text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0px 2px 0 #000;
         }
 
         .screen {
@@ -53,13 +54,12 @@
             font-family: 'Press Start 2P', monospace; 
             color: #2c3e50; font-size: 22px; 
             text-shadow: 2px 2px 0px #3498db; 
-            margin-bottom: 5px; line-height: 1.4;
+            margin-bottom: 15px; line-height: 1.4;
         }
         h2 { color: #d35400; margin-top: 0; font-size: 16px; }
         
         .text-content {
-            background: #fff;
-            border: 2px solid #bdc3c7;
+            background: #fff; border: 2px solid #bdc3c7;
             padding: 15px; border-radius: 8px;
             font-size: 13px; line-height: 1.5;
             text-align: left; margin-bottom: 15px;
@@ -107,8 +107,8 @@
 
         <div id="ui-layer">
             <div>
-                LEVEL: <span id="level-ui" style="color:#2980b9;">PhD Student</span><br>
-                PUBS: <span id="pubs-ui">0</span> <span style="font-size: 12px; color:#555;">(Pgs: <span id="pages-ui">0</span>/10)</span>
+                <span style="color:#f1c40f;">LEVEL: <span id="level-ui">PhD Student</span></span><br>
+                PUBS: <span id="pubs-ui">0</span> <span style="font-size: 11px; color:#ddd;">(Pgs: <span id="pages-ui">0</span>/15)</span>
             </div>
             <div id="status-indicator" style="text-align: right; line-height: 1.4;"></div>
         </div>
@@ -116,27 +116,30 @@
         <!-- Start Screen -->
         <div id="start-screen" class="screen">
             <h1>TENURE RUN</h1>
-            <h2>Publish or Perish!</h2>
             <div class="btn-container">
                 <button onclick="showScreen('tutorial-screen')">PUBLISH OR PERISH</button>
                 <button class="btn-green" onclick="showScreen('about-screen')">ABOUT</button>
             </div>
         </div>
 
-        <!-- Tutorial Screen (Shown before game starts) -->
+        <!-- Tutorial Screen -->
         <div id="tutorial-screen" class="screen hidden">
             <h1 style="font-size: 18px;">TUTORIAL</h1>
             <div class="text-content">
-                <strong>CONTROLS:</strong> Swipe Left/Right (or Arrows) to change lanes. Swipe Up (or Space) to jump.<br><br>
+                <strong>CONTROLS:</strong><br>
+                ↔ Swipe L/R to switch lanes.<br>
+                ↑ Swipe UP to <strong>Jump</strong>.<br>
+                ↓ Swipe DOWN to <strong>Slide</strong>.<br><br>
                 <strong>THE TREADMILL:</strong>
                 <ul>
-                    <li>📄 <strong>Pages:</strong> Collect for +2 Pages. Get 10 pages for 1 Publication!</li>
-                    <li>🟦 <strong>Open Data:</strong> Collect for +5 Pages.</li>
-                    <li>📜 <strong>Grants:</strong> Protects you from 3 APC fees.</li>
-                    <li>🟪 <strong>p-Hacking:</strong> The 'p' boosts speed drastically! Dangerous (no APC protection), but gets you pages fast.</li>
-                    <li>🧱 <strong>Paywalls:</strong> Too high to jump. Instant rejection!</li>
-                    <li><strong style="color:red;">$</strong> <strong>APCs:</strong> Jump over these fees, or use a Grant.</li>
-                    <li>😡 <strong>Reviewer 2:</strong> Stumble, and they catch you!</li>
+                    <li>📄 <strong>Pages:</strong> Collect +2 Pages. 15 Pages = 1 Pub! <em>(Jumping over them skips collection)</em>.</li>
+                    <li>🟦 <strong>Open Data:</strong> +5 Pages.</li>
+                    <li>🛡️ <strong>Preregistration:</strong> Red Badge. Protects you from the dangers of p-hacking!</li>
+                    <li>🟪 <strong>p-Hacking:</strong> Speeds you up dangerously (no APC protection), unless you Preregistered!</li>
+                    <li>📜 <strong>Grants:</strong> Protects from 3 APC fees.</li>
+                    <li>🧱 <strong>Paywalls:</strong> Blocks ALL lanes. JUMP over them!</li>
+                    <li>📚 <strong>Grading/Teaching:</strong> Floating stack. SLIDE under them!</li>
+                    <li><strong style="color:red;">$</strong> <strong>APCs:</strong> JUMP over, or use a Grant.</li>
                 </ul>
             </div>
             <div class="btn-container">
@@ -150,7 +153,7 @@
             <h1 style="font-size: 18px;">ABOUT</h1>
             <div class="text-content">
                 <p>This game is a comical take on the <strong>"publish or perish"</strong> treadmill that early-career researchers must navigate to keep their jobs or get promoted.</p>
-                <p>It aims to raise awareness of systemic issues in academia (like paywalls, massive APC fees, and p-hacking out of desperation), while highlighting positive solutions.</p>
+                <p>It aims to raise awareness of systemic issues in academia (like paywalls, massive APC fees, teaching overloads, and p-hacking out of desperation), while highlighting positive solutions.</p>
                 <p>Researchers worldwide are pushing for fairer evaluations by signing <strong><a href="https://sfdora.org/" target="_blank">SF DORA</a></strong> and joining <strong><a href="https://coara.eu/" target="_blank">CoARA</a></strong> (this game is not affiliated with them). Everyone can sign SF DORA to support assessing research on its own merits rather than journal metrics.</p>
                 <p>To join a large community concerned with Open Science and social justice, visit <strong><a href="https://forrt.org/" target="_blank">FORRT.org</a></strong>.</p>
             </div>
@@ -159,15 +162,15 @@
 
         <!-- Game Over Screen -->
         <div id="game-over-screen" class="screen hidden">
-            <h1 style="color: #c0392b; font-size: 18px; line-height: 1.6;">You did not get a<br>permanent position.</h1>
+            <h1 style="color: #c0392b; font-size: 18px; line-height: 1.6;">You did not publish enough<br>and thus had to perish.</h1>
             <h2 style="margin: 10px 0; color:#333;">Publications: <span id="final-score" style="color:#2980b9;">0</span></h2>
             <h2 style="margin: 5px 0 15px 0; color:#27ae60; font-size:14px;">Final Rank: <span id="final-level"></span></h2>
             
             <div class="text-content" style="font-size: 11px; text-align: center;">
-                Research assessment is tough, often prioritizing quantity over quality, but the system is changing. Researchers worldwide are joining <strong>CoARA</strong> and signing <br><strong><a href="https://sfdora.org/national-and-international-initiatives-discussion-group" target="_blank">SF DORA Initiatives</a></strong><br> to push for fairer evaluations—and you can sign too!
+                Research assessment is tough, often prioritizing quantity over quality, but the system is changing. Researchers worldwide are joining <strong>CoARA</strong> and signing <br><br><strong><a href="https://sfdora.org/national-and-international-initiatives-discussion-group" target="_blank">SF DORA Initiatives</a></strong><br><br> to push for fairer evaluations—and you can sign too!
             </div>
             <div class="btn-container">
-                <button onclick="showScreen('tutorial-screen')">NEW SUBMISSION</button>
+                <button onclick="showScreen('tutorial-screen')">PLAY AGAIN</button>
                 <button class="btn-green" onclick="showScreen('about-screen')">LEARN MORE</button>
             </div>
         </div>
@@ -190,7 +193,7 @@
             }
         }
 
-        // --- AUDIO ENGINE (Full 16-measure loop restored) ---
+        // --- PROGRESSIVE AUDIO ENGINE ---
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         let bgmTimer;
         let nextNoteTime = 0;
@@ -198,13 +201,11 @@
 
         function getFreq(note) { return 440 * Math.pow(2, (note - 69) / 12); }
 
-        // The long, cool SNES-style ragtime melody
         const mainMelody = [
             72,0,76,0,79,0,0,72,  84,0,79,0,76,0,0,0,
             74,0,77,0,81,0,0,74,  83,0,81,0,79,0,0,0,
             72,0,76,0,79,0,0,72,  84,0,79,0,76,0,0,0,
             77,0,81,0,84,0,0,77,  83,0,79,0,72,0,0,0,
-            
             81,0,0,81,84,0,81,0,  79,0,0,79,76,0,72,0,
             74,0,0,74,77,0,81,0,  79,0,77,0,76,0,79,0,
             81,0,0,81,84,0,81,0,  79,0,0,79,76,0,72,0,
@@ -216,32 +217,57 @@
             50,0,0,50,43,0,0,43,  50,0,0,50,43,0,0,43,
             48,0,0,48,43,0,0,43,  48,0,0,48,43,0,0,43,
             53,0,0,53,48,0,0,48,  55,0,0,55,43,0,0,43,
-            
             53,0,0,53,48,0,0,48,  48,0,0,48,43,0,0,43,
             50,0,0,50,45,0,0,45,  43,0,0,43,38,0,0,38,
             53,0,0,53,48,0,0,48,  48,0,0,48,43,0,0,43,
             50,0,0,50,52,0,0,52,  55,0,0,0, 0,0,0,0
         ];
 
-        // Frantic chromatic run for P-Hacking
+        const mainHarmony = [
+            60,0,64,0,67,0,0,0,   60,0,64,0,67,0,0,0,
+            62,0,65,0,69,0,0,0,   62,0,65,0,69,0,0,0,
+            60,0,64,0,67,0,0,0,   60,0,64,0,67,0,0,0,
+            65,0,69,0,72,0,0,0,   67,0,71,0,74,0,0,0,
+            65,0,0,65,0,0,0,0,    64,0,0,64,0,0,0,0,
+            62,0,0,62,0,0,0,0,    67,0,0,67,0,0,0,0,
+            65,0,0,65,0,0,0,0,    64,0,0,64,0,0,0,0,
+            62,0,0,0,0,0,0,0,     67,0,0,0,0,0,0,0
+        ];
+
         const phackMelody = [72, 73, 74, 75, 76, 75, 74, 73];
         const phackBass = [48, 0, 49, 0, 50, 0, 51, 0];
+
+        function playDrum(time, isKick) {
+            let osc = audioCtx.createOscillator(); let gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            if (isKick) {
+                osc.frequency.setValueAtTime(120, time); osc.frequency.exponentialRampToValueAtTime(0.01, time + 0.1);
+                gain.gain.setValueAtTime(0.3, time); gain.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
+            } else {
+                osc.type = 'square'; osc.frequency.setValueAtTime(800, time);
+                gain.gain.setValueAtTime(0.05, time); gain.gain.exponentialRampToValueAtTime(0.01, time + 0.05);
+            }
+            osc.start(time); osc.stop(time + 0.1);
+        }
 
         function scheduleBGM() {
             if (!isPlaying) return;
             let currentTime = audioCtx.currentTime;
             
             while (nextNoteTime < currentTime + 0.1) {
-                let mNote = 0, bNote = 0;
+                let mNote = 0, bNote = 0, hNote = 0;
+                let step = bgmStep;
                 
                 if (player.phackTimer > 0) {
-                    mNote = phackMelody[bgmStep % phackMelody.length];
-                    bNote = phackBass[bgmStep % phackBass.length];
+                    mNote = phackMelody[step % phackMelody.length];
+                    bNote = phackBass[step % phackBass.length];
                 } else {
-                    mNote = mainMelody[bgmStep % mainMelody.length];
-                    bNote = mainBass[bgmStep % mainBass.length];
+                    mNote = mainMelody[step % mainMelody.length];
+                    bNote = mainBass[step % mainBass.length];
+                    hNote = mainHarmony[step % mainHarmony.length];
                 }
 
+                // Level 0+: Melody
                 if (mNote > 0) {
                     let gain = audioCtx.createGain(); gain.connect(audioCtx.destination);
                     let osc = audioCtx.createOscillator(); osc.type = (player.phackTimer > 0) ? 'sawtooth' : 'square';
@@ -250,16 +276,32 @@
                     osc.start(nextNoteTime); osc.stop(nextNoteTime + 0.15);
                 }
 
-                if (bNote > 0) {
+                // Level 1+: Drums
+                if (currentLevel >= 1 && player.phackTimer === 0) {
+                    if (step % 4 === 0) playDrum(nextNoteTime, true); // Kick
+                    if (step % 4 === 2) playDrum(nextNoteTime, false); // Snare
+                }
+
+                // Level 2+: Bass
+                if ((currentLevel >= 2 || player.phackTimer > 0) && bNote > 0) {
                     let gain = audioCtx.createGain(); gain.connect(audioCtx.destination);
                     let osc = audioCtx.createOscillator(); osc.type = 'triangle';
                     osc.frequency.setValueAtTime(getFreq(bNote), nextNoteTime); osc.connect(gain);
                     gain.gain.setValueAtTime(0.15, nextNoteTime); gain.gain.exponentialRampToValueAtTime(0.01, nextNoteTime + 0.2);
                     osc.start(nextNoteTime); osc.stop(nextNoteTime + 0.2);
                 }
+
+                // Level 3+: Harmony
+                if (currentLevel >= 3 && player.phackTimer === 0 && hNote > 0) {
+                    let gain = audioCtx.createGain(); gain.connect(audioCtx.destination);
+                    let osc = audioCtx.createOscillator(); osc.type = 'sine';
+                    osc.frequency.setValueAtTime(getFreq(hNote), nextNoteTime); osc.connect(gain);
+                    gain.gain.setValueAtTime(0.03, nextNoteTime); gain.gain.linearRampToValueAtTime(0.01, nextNoteTime + 0.15);
+                    osc.start(nextNoteTime); osc.stop(nextNoteTime + 0.15);
+                }
                 
                 let currentSpeed = gameSpeed * (player.phackTimer > 0 ? 1.5 : 1);
-                let currentBPM = 80 + (currentSpeed * 10); 
+                let currentBPM = 80 + (currentSpeed * 8); 
                 let stepDuration = 60 / (currentBPM * 2);
                 
                 nextNoteTime += stepDuration;
@@ -301,29 +343,19 @@
 
         // --- LEVELING SYSTEM & SPRITES ---
         const levels = [
-            { name: "PhD Student", req: 0, 
-              sprite: ["  BBBB  ", " BCCCCB ", " BCBWCB ", " WWWWWW ", " BWWWWb ", "  WWWW  ", "  B  B  ", "  B  B  "] },
-            { name: "Postdoc", req: 3, 
-              sprite: ["  BBBB  ", " BCCCCB ", " BCCCgB ", " gggggg ", " BggWgb ", "  gggg  ", "  B  B  ", "  B  B  "] }, 
-            { name: "Lecturer", req: 9, 
-              sprite: ["  BBBB  ", " BCCCCB ", " BCBWCB ", " BBBBBB ", " WBBBBW ", "  BBBB  ", "  B  B  ", "  B  B  "] }, 
-            { name: "Asst. Prof", req: 21, 
-              sprite: ["  BBBB  ", " BCCCCB ", " BCBWCB ", " BBBBBB ", " WBBBBW ", "  BBBB  ", "  W  W  ", "  B  B  ", "  B  B  "] }, 
-            { name: "Tenured Prof", req: 45, 
-              sprite: ["  YYYY  ", "  BBBB  ", " BCCCCB ", " BCBWCB ", " YYYYYY ", " YYYYYY ", "  YYYY  ", "  Y  Y  ", "  B  B  "] }  
+            { name: "PhD Student", req: 0,   colorBody: 'W', colorTie: 'b' },
+            { name: "Postdoc", req: 3,       colorBody: 'g', colorTie: 'g' }, 
+            { name: "Lecturer", req: 9,      colorBody: 'B', colorTie: 'B' }, 
+            { name: "Asst. Prof", req: 21,   colorBody: 'B', colorTie: 'W' } 
         ];
 
-        let pages = 0;
-        let pubs = 0;
-        let currentLevel = 0;
+        let pages = 0; let pubs = 0; let currentLevel = 0;
         const colors = {'W':'#ffffff', 'B':'#000000', 'C':'#ffc0cb', 'b':'#2980b9', 'g':'#95a5a6', 'Y':'#f1c40f'};
 
         function addPages(amount) {
             pages += amount;
-            while (pages >= 10) {
-                pages -= 10;
-                pubs++;
-                pubsEl.innerText = pubs;
+            while (pages >= 15) {
+                pages -= 15; pubs++; pubsEl.innerText = pubs;
                 checkLevelUp();
             }
             pagesEl.innerText = pages;
@@ -331,17 +363,44 @@
 
         function checkLevelUp() {
             while (currentLevel < levels.length - 1 && pubs >= levels[currentLevel + 1].req) {
-                currentLevel++;
-                levelEl.innerText = levels[currentLevel].name;
-                playSound('levelup');
-                spawnParticles(player.x, player.renderY - 30, '#f1c40f', 30, "LEVEL UP!");
+                currentLevel++; levelEl.innerText = levels[currentLevel].name;
+                playSound('levelup'); spawnParticles(player.x, player.renderY - 30, '#f1c40f', 30, "LEVEL UP!");
+            }
+        }
+
+        function getPlayerSprite() {
+            let l = levels[currentLevel];
+            let bd = l.colorBody; let t = l.colorTie;
+            let head = ["  BBBB  ", " BCCCCB ", " BCBWCB "];
+            let body = [` ${bd}${bd}${bd}${bd}${bd}${bd} `, ` B${bd}${bd}${bd}${bd}${t} `, `  ${bd}${bd}${bd}${bd}  `];
+            let legs = ["  B  B  ", "  B  B  "];
+
+            // Character Animations
+            if (player.isSliding) {
+                return ["        ","        ","  BBBB  ", " BCCCCB ", ` B${bd}${bd}${bd}${bd}${bd} `, ` B${bd}${bd}${bd}${bd}${t} `, " B    B ", " B    B "];
+            } else if (player.isJumping) {
+                return head.concat([` W${bd}${bd}${bd}${bd}W `, `  ${bd}${bd}${bd}${bd}  `, "  BBBB  ", "        ", "        "]);
+            } else {
+                // Rhythmic walking bob
+                if (bgmStep % 4 < 2) legs = ["   B B  ", "   B B  "];
+                return head.concat(body).concat(legs);
             }
         }
 
         function drawPixelSprite(ctx, sprite, x, y, scale) {
             const size = scale;
             const w = sprite[0].length * size; const h = sprite.length * size;
-            const startX = x - w/2; const startY = y - h + (size*2); // align feet
+            const startX = x - w/2; const startY = y - h + (size*2); 
+            
+            // Leaning logic for dodging
+            ctx.save();
+            ctx.translate(x, y);
+            if (!player.isJumping && !player.isSliding) {
+                let tilt = (player.x - player.lastX) * 0.02;
+                ctx.rotate(tilt);
+            }
+            ctx.translate(-x, -y);
+
             for(let r=0; r<sprite.length; r++) {
                 for(let c=0; c<sprite[r].length; c++) {
                     const char = sprite[r][c];
@@ -351,6 +410,8 @@
                     }
                 }
             }
+            ctx.restore();
+            player.lastX = player.x;
         }
 
         // --- GAME ENGINE ---
@@ -360,7 +421,7 @@
         const GROUND_Y = 550;
         
         let isPlaying = false, gameSpeed = 5, frameCount = 0, animationId;
-        let player = { lane: 1, x: 225, renderY: GROUND_Y, isJumping: false, jumpProgress: 0, grantCharges: 0, phackTimer: 0 };
+        let player = { lane: 1, x: 225, lastX: 225, renderY: GROUND_Y, isJumping: false, isSliding: false, slideTimer: 0, jumpProgress: 0, grantCharges: 0, phackTimer: 0, preregShield: false };
         let reviewerDist = 100;
         let entities = [], particles = [], textLines = [], pageBreaks = [];
         let pageNum = 2;
@@ -371,8 +432,11 @@
             if (!isPlaying) return;
             if (dir === 'left' && player.lane > 0) player.lane--;
             if (dir === 'right' && player.lane < 2) player.lane++;
-            if (dir === 'up' && !player.isJumping) {
+            if (dir === 'up' && !player.isJumping && !player.isSliding) {
                 player.isJumping = true; player.jumpProgress = 0; playSound('jump');
+            }
+            if (dir === 'down' && !player.isJumping && !player.isSliding) {
+                player.isSliding = true; player.slideTimer = 35; // Frames to stay sliding
             }
         }
         
@@ -380,6 +444,7 @@
             if (e.key === 'ArrowLeft' || e.key === 'a') handleMove('left');
             if (e.key === 'ArrowRight' || e.key === 'd') handleMove('right');
             if (e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') handleMove('up');
+            if (e.key === 'ArrowDown' || e.key === 's') handleMove('down');
         });
 
         let touchX = 0, touchY = 0;
@@ -391,30 +456,25 @@
             if (Math.abs(dx) > Math.abs(dy)) {
                 if (dx > 30) handleMove('right'); else if (dx < -30) handleMove('left');
             } else {
-                if (dy < -30) handleMove('up');
+                if (dy < -30) handleMove('up'); else if (dy > 30) handleMove('down');
             }
         }, {passive: false});
 
         function startGame() {
             isPlaying = true; pages = 0; pubs = 0; currentLevel = 0; gameSpeed = 5; frameCount = 0; pageNum = 2;
             entities = []; particles = []; textLines = []; pageBreaks = [];
-            
             pubsEl.innerText = pubs; pagesEl.innerText = pages; levelEl.innerText = levels[0].name;
             
             for(let y=0; y<700; y+=40) spawnTextLine(y);
             pageBreaks.push({y: 350, page: 1});
 
-            player = { lane: 1, x: 225, renderY: GROUND_Y, isJumping: false, jumpProgress: 0, grantCharges: 0, phackTimer: 0 };
-            reviewerDist = 100;
-            statusIndicator.innerText = "";
-            warningFlash.classList.remove('warning-active');
+            player = { lane: 1, x: 225, lastX: 225, renderY: GROUND_Y, isJumping: false, isSliding: false, slideTimer: 0, jumpProgress: 0, grantCharges: 0, phackTimer: 0, preregShield: false };
+            reviewerDist = 100; statusIndicator.innerText = ""; warningFlash.classList.remove('warning-active');
             
-            showScreen(''); // Hide all screens
-            
+            showScreen(''); 
             if (audioCtx.state === 'suspended') audioCtx.resume();
             clearTimeout(bgmTimer); bgmStep = 0; nextNoteTime = audioCtx.currentTime + 0.1;
             scheduleBGM();
-
             animationId = requestAnimationFrame(gameLoop);
         }
 
@@ -425,22 +485,26 @@
         }
 
         function spawnEntity() {
-            const lane = Math.floor(Math.random() * 3);
             const rand = Math.random();
+            const lane = Math.floor(Math.random() * 3);
             let type = '';
             
-            if (rand < 0.30) type = 'paper';
-            else if (rand < 0.45) type = 'os_badge';
-            else if (rand < 0.70) type = 'paywall';
-            else if (rand < 0.90) type = 'apc';
-            else if (rand < 0.95) type = 'grant';
+            let grantChance = currentLevel * 0.02; // Grants spawn slightly more at higher levels
+
+            if (rand < 0.25) type = 'paper';
+            else if (rand < 0.35) type = 'os_badge';
+            else if (rand < 0.40 + grantChance) type = 'grant';
+            else if (rand < 0.45 + grantChance) type = 'prereg';
+            else if (rand < 0.60 + grantChance) type = 'teaching';
+            else if (rand < 0.75 + grantChance) type = 'paywall';
+            else if (rand < 0.95 + grantChance) type = 'apc';
             else type = 'phack';
 
-            let inRow = entities.filter(e => e.y < 100 && e.type === 'paywall');
-            if (type === 'paywall' && inRow.length >= 2) type = 'apc'; 
+            let xPos = LANES[lane];
+            if (type === 'paywall') { xPos = PAPER_X + PAPER_WIDTH/2; } // Center it
 
-            if (!entities.some(e => e.lane === lane && e.y < 150)) {
-                entities.push({ type: type, lane: lane, x: LANES[lane], y: -50, marked: false });
+            if (!entities.some(e => e.y < 150 && (e.lane === lane || e.type === 'paywall'))) {
+                entities.push({ type: type, lane: lane, x: xPos, y: -50, marked: false });
             }
         }
 
@@ -465,15 +529,9 @@
             let speedMult = (player.phackTimer > 0) ? 1.5 : 1;
             let activeSpeed = gameSpeed * speedMult;
 
-            // Passive Writing: 1 Page every 120 frames (approx 2 seconds)
             if (frameCount % 120 === 0) addPages(1); 
-
             if (frameCount % Math.floor(40/activeSpeed) === 0) spawnTextLine(-20);
-            
-            if (frameCount % Math.floor(400/activeSpeed) === 0) {
-                pageBreaks.push({y: -50, page: pageNum++});
-            }
-
+            if (frameCount % Math.floor(400/activeSpeed) === 0) pageBreaks.push({y: -50, page: pageNum++});
             if (frameCount % Math.max(15, Math.floor(60 - activeSpeed*2)) === 0) spawnEntity();
 
             update(activeSpeed, speedMult); 
@@ -485,16 +543,22 @@
             player.x += (LANES[player.lane] - player.x) * 0.25;
 
             if (player.phackTimer > 0) player.phackTimer--;
+            
+            if (player.isSliding) {
+                player.slideTimer--;
+                if (player.slideTimer <= 0) player.isSliding = false;
+            }
 
             let jumpOffset = 0;
             if (player.isJumping) {
                 player.jumpProgress += 0.08 * speedMult; 
-                jumpOffset = Math.sin(player.jumpProgress) * 120;
+                jumpOffset = Math.sin(player.jumpProgress) * 130; // Slightly higher jump
                 if (player.jumpProgress >= Math.PI) { player.isJumping = false; jumpOffset = 0; }
             }
             player.renderY = GROUND_Y - jumpOffset;
 
             let statusHtml = "";
+            if (player.preregShield) statusHtml += `🛡️ PREREGISTERED<br>`;
             if (player.grantCharges > 0) statusHtml += `📜 GRANTS: ${player.grantCharges}x `;
             if (player.phackTimer > 0) statusHtml += `<br><span style="color:#8e44ad; text-shadow:0 0 5px #fff;">p-HACKING (${Math.ceil(player.phackTimer/60)}s)</span>`;
             statusIndicator.innerHTML = statusHtml;
@@ -510,42 +574,73 @@
             entities.forEach(e => {
                 e.y += activeSpeed;
 
-                if (e.lane === player.lane && Math.abs(e.y - GROUND_Y) < 40 && !e.marked) {
+                // Collision Box
+                let isHit = false;
+                if (e.type === 'paywall') {
+                    if (Math.abs(e.y - GROUND_Y) < 40) isHit = true; // Hits anywhere horizontally
+                } else {
+                    if (e.lane === player.lane && Math.abs(e.y - GROUND_Y) < 40) isHit = true;
+                }
+
+                if (isHit && !e.marked) {
                     let isHighUp = (GROUND_Y - player.renderY) > 50;
 
                     if (e.type === 'paper') {
-                        addPages(2); playSound('coin'); e.marked = true;
-                        spawnParticles(e.x, e.y, '#bdc3c7', 10); spawnParticles(e.x, e.y - 20, '#2c3e50', 1, "+2 Pgs");
+                        if (!player.isJumping) {
+                            addPages(2); playSound('coin'); e.marked = true;
+                            spawnParticles(e.x, e.y, '#bdc3c7', 10); spawnParticles(e.x, e.y - 20, '#2c3e50', 1, "+2 Pgs");
+                        }
                     }
                     else if (e.type === 'os_badge') {
-                        addPages(5); playSound('coin'); e.marked = true;
-                        spawnParticles(e.x, e.y, '#2980b9', 15); spawnParticles(e.x, e.y - 20, '#2980b9', 1, "+5 Pgs");
+                        if (!player.isJumping) {
+                            addPages(5); playSound('coin'); e.marked = true;
+                            spawnParticles(e.x, e.y, '#2980b9', 15); spawnParticles(e.x, e.y - 20, '#2980b9', 1, "+5 Pgs");
+                        }
                     } 
                     else if (e.type === 'grant') {
-                        player.grantCharges = 3; playSound('grant'); e.marked = true;
-                        spawnParticles(e.x, e.y, '#27ae60', 20);
+                        if (!player.isJumping) {
+                            player.grantCharges = 3; playSound('grant'); e.marked = true;
+                            spawnParticles(e.x, e.y, '#27ae60', 20);
+                        }
+                    }
+                    else if (e.type === 'prereg') {
+                        if (!player.isJumping) {
+                            player.preregShield = true; playSound('powerup'); e.marked = true;
+                            spawnParticles(e.x, e.y, '#c0392b', 20);
+                        }
                     }
                     else if (e.type === 'phack') {
-                        player.phackTimer = 300; playSound('powerup'); e.marked = true;
-                        spawnParticles(e.x, e.y, '#8e44ad', 30);
+                        if (!player.isJumping) {
+                            e.marked = true;
+                            if (player.preregShield) {
+                                // Shield protects from the dangerous speedup
+                                player.preregShield = false;
+                                addPages(10); // Reward for resisting temptation
+                                playSound('coin');
+                                spawnParticles(e.x, e.y, '#8e44ad', 20); spawnParticles(e.x, e.y - 20, '#c0392b', 1, "RESISTED!");
+                            } else {
+                                player.phackTimer = 300; playSound('powerup');
+                                spawnParticles(e.x, e.y, '#8e44ad', 30);
+                            }
+                        }
+                    }
+                    else if (e.type === 'teaching') {
+                        if (player.isSliding) { e.marked = true; score += 5; } // Successfully slid under
+                        else {
+                            playSound('crash'); e.marked = true; spawnParticles(e.x, e.y, '#f39c12', 30);
+                            if (reviewerDist < 50) gameOver(); else stumble();
+                        }
                     }
                     else if (e.type === 'paywall') {
-                        playSound('crash'); e.marked = true;
-                        spawnParticles(e.x, e.y, '#c0392b', 30);
+                        if (isHighUp) return; // Jumped over safely
+                        playSound('crash'); e.marked = true; spawnParticles(player.x, e.y, '#c0392b', 30);
                         gameOver(); 
                     }
                     else if (e.type === 'apc') {
-                        if (e.type === 'apc' && isHighUp) return; 
-
-                        playSound('crash'); e.marked = true;
-                        spawnParticles(e.x, e.y, '#c0392b', 30);
-
-                        if (player.grantCharges > 0) { 
-                            player.grantCharges--; 
-                        } else {
-                            if (reviewerDist < 50) gameOver();
-                            else stumble();
-                        }
+                        if (isHighUp) return; // Jumped over safely
+                        playSound('crash'); e.marked = true; spawnParticles(e.x, e.y, '#c0392b', 30);
+                        if (player.grantCharges > 0) { player.grantCharges--; } 
+                        else { if (reviewerDist < 50) gameOver(); else stumble(); }
                     }
                 }
                 if (e.y > 800) e.marked = true;
@@ -600,14 +695,27 @@
             ctx.textAlign = "center"; ctx.textBaseline = "middle";
 
             entities.forEach(e => {
+                // Drop shadow (Ground level)
                 ctx.fillStyle = "rgba(0,0,0,0.2)";
-                ctx.beginPath(); ctx.ellipse(e.x, e.y + 15, 25, 6, 0, 0, Math.PI*2); ctx.fill();
+                if (e.type === 'paywall') {
+                    ctx.beginPath(); ctx.ellipse(e.x, e.y + 15, PAPER_WIDTH/2 - 10, 6, 0, 0, Math.PI*2); ctx.fill();
+                } else {
+                    ctx.beginPath(); ctx.ellipse(e.x, e.y + 15, 25, 6, 0, 0, Math.PI*2); ctx.fill();
+                }
 
                 if (e.type === 'os_badge') {
                     ctx.fillStyle = "#2980b9"; ctx.beginPath();
                     for (let i=0; i<6; i++) { let angle = (Math.PI/3)*i + (Math.PI/6); ctx.lineTo(e.x + 16*Math.cos(angle), e.y + 16*Math.sin(angle)); }
                     ctx.closePath(); ctx.fill();
                     ctx.fillStyle = "#fff"; ctx.fillRect(e.x-6, e.y+2, 3, -8); ctx.fillRect(e.x-1, e.y+2, 3, -12); ctx.fillRect(e.x+4, e.y+2, 3, -6);
+                }
+                else if (e.type === 'prereg') {
+                    ctx.fillStyle = "#c0392b"; ctx.beginPath();
+                    for (let i=0; i<6; i++) { let angle = (Math.PI/3)*i + (Math.PI/6); ctx.lineTo(e.x + 16*Math.cos(angle), e.y + 16*Math.sin(angle)); }
+                    ctx.closePath(); ctx.fill();
+                    // Checkmark
+                    ctx.strokeStyle = "#fff"; ctx.lineWidth = 3; ctx.beginPath();
+                    ctx.moveTo(e.x - 6, e.y); ctx.lineTo(e.x - 2, e.y + 5); ctx.lineTo(e.x + 8, e.y - 5); ctx.stroke();
                 }
                 else if (e.type === 'paper') {
                     ctx.fillStyle = '#fff'; ctx.strokeStyle = '#333'; ctx.lineWidth = 2;
@@ -623,17 +731,25 @@
                     ctx.fillText("p", e.x, e.y);
                 }
                 else if (e.type === 'paywall') {
-                    ctx.fillStyle = '#2c3e50'; ctx.fillRect(e.x - 40, e.y - 80, 80, 100);
+                    ctx.fillStyle = '#2c3e50'; ctx.fillRect(PAPER_X + 10, e.y - 60, PAPER_WIDTH - 20, 80);
                     ctx.strokeStyle = '#1a252f'; ctx.lineWidth = 2;
-                    for(let i=0; i<5; i++) { ctx.beginPath(); ctx.moveTo(e.x-40, e.y-80 + i*20); ctx.lineTo(e.x+40, e.y-80 + i*20); ctx.stroke(); }
-                    ctx.fillStyle = '#e74c3c'; ctx.font = "bold 14px Arial";
-                    ctx.fillText("PAY", e.x, e.y - 45); ctx.fillText("WALL", e.x, e.y - 25);
+                    for(let i=0; i<4; i++) { ctx.beginPath(); ctx.moveTo(PAPER_X+10, e.y-60 + i*20); ctx.lineTo(PAPER_X+PAPER_WIDTH-10, e.y-60 + i*20); ctx.stroke(); }
+                    ctx.fillStyle = '#e74c3c'; ctx.font = "bold 16px Arial";
+                    ctx.fillText("PAYWALL", e.x, e.y - 20);
+                }
+                else if (e.type === 'teaching') {
+                    // Floating high up
+                    ctx.fillStyle = '#f39c12'; ctx.fillRect(e.x-20, e.y-40, 40, 10);
+                    ctx.fillStyle = '#e67e22'; ctx.fillRect(e.x-18, e.y-50, 36, 10);
+                    ctx.fillStyle = '#d35400'; ctx.fillRect(e.x-15, e.y-60, 30, 10);
+                    ctx.fillStyle = '#fff'; ctx.font = "bold 10px Arial"; ctx.fillText("EXAMS", e.x, e.y - 35);
                 }
                 else if (e.type === 'apc') {
                     ctx.fillStyle = '#c0392b'; ctx.font = "bold 44px Arial"; ctx.fillText("$", e.x, e.y + 5);
                 }
             });
 
+            // Player Shadow
             let shadowScale = Math.max(0.2, 1 - ((GROUND_Y - player.renderY) / 200));
             ctx.fillStyle = "rgba(0,0,0,0.3)";
             ctx.beginPath(); ctx.ellipse(player.x, GROUND_Y + 20, 25 * shadowScale, 6 * shadowScale, 0, 0, Math.PI*2); ctx.fill();
@@ -643,7 +759,7 @@
                 ctx.fillStyle = "rgba(142, 68, 173, 0.4)"; ctx.fill();
             }
 
-            drawPixelSprite(ctx, levels[currentLevel].sprite, player.x, player.renderY, 5);
+            drawPixelSprite(ctx, getPlayerSprite(), player.x, player.renderY, 5);
 
             if (reviewerDist < 100) {
                 let revY = 750 - (100 - reviewerDist) * 3;
